@@ -1,39 +1,129 @@
-import { ScAddr, ScConstruction, ScLinkContent, ScLinkContentType, ScTemplate, ScType } from 'ts-sc-client';
+import { 
+    ScAddr,
+    ScTemplate, 
+    ScType 
+} from 'ts-sc-client';
 import { client } from '@api/sc/client';
+import { generateLinkText } from './newMessageAgent';
 
-const keynodes = [
-    { id: 'current_user', type: ScType.ConstNode },
-    { id: 'nrel_google_access_token', type: ScType.NodeNonRole },
+const keynode_images = [
+    { id: 'users', type: ScType.ConstNodeClass },
+    { id: 'nrel_google_session', type: ScType.NodeNonRole },
+    { id: 'action_create_google_user', type: ScType.ConstNodeClass },
+    { id: "action", type: ScType.ConstNodeClass },
+    { id: "action_initiated", type: ScType.ConstNodeClass },
+    { id: "rrel1", type: ScType.ConstNodeRole },
+    { id: "rrel2", type: ScType.ConstNodeRole }
 ];
 
-export const create_current_user = async (credsJson: string) => {
+
+export const call_create_google_user_agent = async (
+    code: string, 
+    session: string,
+) => {
     try {
+        console.log("Start calling create user agent")
+        const keynodes = await client.resolveKeynodes(keynode_images);
+        const user_node = await find_user_by_session(session, keynodes);
+        if (!user_node)
+        {
+            // generate code and session links in kb
+            const code_link = await generateLinkText(code);
+            const session_link = await generateLinkText(session);
 
-        const link = await generateLinkText(credsJson);
-        const res = await client.resolveKeynodes(keynodes);
+            // alias for template
+            const action_node_alias = "_action_node"
 
-        const template = new ScTemplate();
-        template.quintuple(
-            res['current_user'],
-            ScType.VarCommonArc,
-            link,
-            ScType.VarPermPosArc,
-            res['nrel_google_access_token'],
-        );
+            const template = new ScTemplate();
+            
+            // call agent (realization in python module)
+            template.triple(
+                keynodes["action"], 
+                ScType.VarPermPosArc, 
+                [ScType.VarNode, action_node_alias]
+            );
+            template.triple(
+                keynodes["action_create_google_user"], 
+                ScType.VarPermPosArc, 
+                action_node_alias
+            );
+            template.triple(
+                keynodes["action_initiated"], 
+                ScType.VarPermPosArc, 
+                action_node_alias
+            );
 
-        const r = await client.generateByTemplate(template, {});
+            if (code_link)
+                template.quintuple(
+                    action_node_alias,
+                    ScType.VarPermPosArc,
+                    code_link,
+                    ScType.VarPermPosArc,
+                    keynodes["rrel2"],
+                );
+            
+            if (session_link)
+                template.quintuple(
+                    action_node_alias,
+                    ScType.VarPermPosArc,
+                    session_link,
+                    ScType.VarPermPosArc,
+                    keynodes["rrel1"],
+                );
+
+            await client.generateByTemplate(template, {});
+        }
+        else {
+            console.log(
+                "User with such session: ",
+                session, 
+                " already exists"
+                )
+        }
+
     } catch (error) {
-        console.error('Ошибка в записи пользователя в БЗ:', error);
+        console.error('Error with user saving in kb:', error);
         throw error;
     }
 };
 
-const generateLinkText = async (creds: string) => {
-    const constructionLink = new ScConstruction();
-    constructionLink.generateLink(ScType.ConstNodeLink, new ScLinkContent(creds, ScLinkContentType.String));
-    const resultLinkNode = await client.generateElements(constructionLink);
-    if (resultLinkNode.length) {
-        return resultLinkNode[0];
+
+const find_user_by_session = async (
+    session: string, 
+    keynodes: Record<string, ScAddr>
+) => {
+    // check if user with such session exists in knowledge base
+    const session_link = await client.searchLinksByContents([session])[0];
+    console.log("SESSION_LINK:", session_link)
+    if (session_link){
+        const template = new ScTemplate();
+        const component_user = '_user'
+        const component_session = '_google_session'
+        template.quintuple(
+            [ScType.VarNode, component_user],
+            ScType.VarCommonArc,
+            [session_link, component_session],
+            ScType.VarPermPosArc,
+            keynodes['nrel_google_session'],
+        );
+        template.triple(
+            keynodes['users'],
+            ScType.VarPermPosArc,
+            [ScType.VarNode, component_user],
+        )
+
+        const search_result = await client.searchByTemplate(template);
+        
+        if (search_result.length){
+            const user_node = search_result[0].get(component_user)
+            const session_content = client.getLinkContents([user_node])[0].data
+            console.log(
+                'User with google_session: ', 
+                session_content,
+                'already exists!'
+            )
+            return user_node
+        }
     }
-    return new ScAddr(0);
-};
+    return null
+}
