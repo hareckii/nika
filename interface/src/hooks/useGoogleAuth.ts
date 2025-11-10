@@ -82,7 +82,8 @@ export const useGoogleAuth = () => {
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&response_type=${responseType}` +
       `&scope=${encodeURIComponent(scopes.join(' '))}` +
-      `&access_type=offline`;
+      `&access_type=offline` +
+      `&prompt=consent`;
 
     window.location.href = authUrl;
   }, []);
