@@ -94,7 +94,6 @@ const find_user_by_session = async (
 ) => {
     // check if user with such session exists in knowledge base
     const session_link = await client.searchLinksByContents([session])[0];
-    console.log("SESSION_LINK:", session_link)
     if (session_link){
         const template = new ScTemplate();
         const component_user = '_user'

@@ -4,7 +4,6 @@ import { client } from '@api';
 import { dialogAgent } from '@api/sc/agents/dialogAgent';
 import { getInfoMessage, searchChatMessages } from '@api/sc/search/searchChatMessages';
 import { newMessageAgent, generateLinkText } from '@api/sc/agents/newMessageAgent';
-import { getCookie } from './useGoogleAuth';
 
 
 interface IMessage {
@@ -89,18 +88,6 @@ export const useChat = (user: ScAddr | null) => {
 
         return localShouldEnd;
     }, [chatNode, shouldEnd, messages]);
-
-    const createSessionLink = async () => {
-        const session = getCookie('google_session');
-        console.log('get session:', session)
-        if(!session){
-            return null
-        }
-        else{
-            return await generateLinkText(session)
-        }
-
-    }
     const sendMessage = useCallback(
         async (user: ScAddr, text: string) => {
             const linkAddr = await generateLinkText(text);
@@ -118,9 +105,8 @@ export const useChat = (user: ScAddr | null) => {
                 addr: chatNode,
                 isLoading: true,
             };
-            const session_link = await createSessionLink()
             setMessages((prev) => [...prev, message]);
-            await newMessageAgent(chatNode, user, session_link, linkAddr);
+            await newMessageAgent(chatNode, user, linkAddr);
 
             setIsAgentAnswer(false);
         },

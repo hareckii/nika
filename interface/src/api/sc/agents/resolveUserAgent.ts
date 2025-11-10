@@ -1,26 +1,42 @@
 import {ScTemplate, ScType} from 'ts-sc-client';
 import { client } from '@api/sc';
+import { getCookie } from '@hooks/useGoogleAuth';
 
 const conceptUser = 'concept_user';
 const conceptDialog = 'concept_dialogue';
 const rrelDialogParticipant = 'rrel_dialog_participant';
+const nrelGoogleSession = 'nrel_google_session';
 
 const baseKeynodes = [
     { id: conceptUser, type: ScType.ConstNodeClass },
     { id: conceptDialog, type: ScType.ConstNodeClass },
     { id: rrelDialogParticipant, type: ScType.ConstNodeRole },
+    { id: nrelGoogleSession, type: ScType.ConstNodeNonRole },
 ];
 
 const getUser = async () => {
+    const session = getCookie('google_session')
+    if(!session) return null;
+    console.log("getUser Session:", session)
+    
+    const res = await client.searchLinksByContents([session])
+    const session_link = res[0][0]
+    console.log("getUser Session_link before:", session_link)
+    if(!session_link) return null;
+    console.log("getUser Session_link:", session_link)
+
     const keynodes = await client.resolveKeynodes(baseKeynodes);
     const user = '_user';
-
     const template = new ScTemplate();
     template.triple(
         keynodes[conceptUser],
         ScType.VarPermPosArc,
         [ScType.VarNode, user],
     );
+    template.quintuple(
+        user, ScType.VarCommonArc, session_link,
+        ScType.VarPermPosArc, keynodes[nrelGoogleSession]
+    )
     const result = await client.searchByTemplate(template);
     if (result.length === 1) {
         return result[0].get(user);

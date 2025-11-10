@@ -58,7 +58,6 @@ export const makeAgent = (template: ScTemplate, actionNodeAlias: string) => {
     return new Promise<ScAddr | null>((resolve) => {
         client.resolveKeynodes(baseKeynodes).then(async (keynodes) => {
             const actionNode = await describeAgent(template, actionNodeAlias);
-            console.log('ACTION_NODE:', actionNode)
             if (!actionNode) return resolve(null);
 
             const onResponse = async () => {

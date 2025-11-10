@@ -93,7 +93,6 @@ class CreateGoogleUser(ScAgentClassic):
 
         return ScResult.OK
     
-    @staticmethod
     def get_response(self, code: str) -> GoogleResponse:
         # get access and refresh tokens by credentials
         base_url = "https://oauth2.googleapis.com/token"
@@ -164,7 +163,6 @@ class CreateGoogleUser(ScAgentClassic):
         )
         generate_by_template(template)
     
-    @staticmethod    
     def get_user_info(self, token: str) -> User:
         # get base user info(name and email)
         url = "https://www.googleapis.com/oauth2/v2/userinfo"
