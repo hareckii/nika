@@ -12,8 +12,8 @@ const keynode_images = [
     { id: 'action_create_google_user', type: ScType.ConstNodeClass },
     { id: "action", type: ScType.ConstNodeClass },
     { id: "action_initiated", type: ScType.ConstNodeClass },
-    { id: "rrel1", type: ScType.ConstNodeRole },
-    { id: "rrel2", type: ScType.ConstNodeRole }
+    { id: "rrel_1", type: ScType.ConstNodeRole },
+    { id: "rrel_2", type: ScType.ConstNodeRole }
 ];
 
 
@@ -59,7 +59,7 @@ export const call_create_google_user_agent = async (
                     ScType.VarPermPosArc,
                     code_link,
                     ScType.VarPermPosArc,
-                    keynodes["rrel2"],
+                    keynodes["rrel_2"],
                 );
             
             if (session_link)
@@ -68,7 +68,7 @@ export const call_create_google_user_agent = async (
                     ScType.VarPermPosArc,
                     session_link,
                     ScType.VarPermPosArc,
-                    keynodes["rrel1"],
+                    keynodes["rrel_1"],
                 );
 
             await client.generateByTemplate(template, {});
