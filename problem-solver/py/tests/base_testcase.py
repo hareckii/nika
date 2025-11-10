@@ -3,8 +3,6 @@ from unittest import TestCase
 
 from sc_client.client import generate_elements_by_scs
 from sc_kpm import ScServer
-from pathlib import Path
-from tests import TESTS_DIR
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s | %(name)s | %(message)s", datefmt="[%d-%b-%y %H:%M:%S]"

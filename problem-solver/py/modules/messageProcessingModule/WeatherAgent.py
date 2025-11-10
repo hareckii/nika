@@ -55,7 +55,7 @@ class WeatherAgent(ScAgentClassic):
 
             if not check_connector(sc_type.VAR_PERM_POS_ARC, message_type, message_addr):
                 self.logger.info(
-                    f"WeatherAgent: the message isn’t about weather")
+                    "WeatherAgent: the message isn’t about weather")
                 return ScResult.OK
 
             idtf = ScKeynodes.resolve("nrel_idtf", sc_type.CONST_NODE_NON_ROLE)
@@ -72,7 +72,7 @@ class WeatherAgent(ScAgentClassic):
                 city_addr, nrel_temperature, answer_phrase)
 
             # if there is no such сity in country
-            if not country_addr is None:
+            if country_addr is not None:
                 if not search_connector(country_addr, city_addr, sc_type.VAR_COMMON_ARC):
                     self.set_unknown_city_link(action_node, answer_phrase)
                     return ScResult.OK
@@ -96,7 +96,7 @@ class WeatherAgent(ScAgentClassic):
             temperature = self.get_weather(
                 entity_idtf, city_addr, country_addr)
         except requests.exceptions.ConnectionError:
-            self.logger.info(f"WeatherAgent: finished with connection error")
+            self.logger.info("WeatherAgent: finished with connection error")
             return ScResult.ERROR
         link = generate_link(
             str(temperature), ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK)

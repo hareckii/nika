@@ -1,28 +1,26 @@
 import json
 import logging
-from sc_client.models import ScAddr
+from datetime import datetime, timezone
+
+import requests
+from google.oauth2.credentials import Credentials
 from sc_client.constants import sc_type
+from sc_client.models import ScAddr
+from sc_kpm import ScAgentClassic, ScKeynodes, ScResult
 from sc_kpm.identifiers import CommonIdentifiers
 from sc_kpm.sc_sets import ScStructure
-
-from sc_kpm import ScAgentClassic, ScResult
 from sc_kpm.utils import (
-    get_link_content_data,
     check_connector,
+    get_link_content_data,
     search_element_by_role_relation,
 )
 from sc_kpm.utils.action_utils import (
-    generate_action_result,
-    finish_action_with_status,
-    get_action_arguments,
     execute_agent,
+    finish_action_with_status,
+    generate_action_result,
+    get_action_arguments,
     get_action_result,
 )
-from sc_kpm import ScKeynodes
-
-import requests
-from datetime import datetime, timezone
-from google.oauth2.credentials import Credentials
 
 calendar_id = "primary"
 
@@ -58,7 +56,7 @@ class DeleteEventAgent(ScAgentClassic):
 
             if not check_connector(sc_type.VAR_PERM_POS_ARC, message_type, message_addr):
                 self.logger.info(
-                    f"The message isn’t about deleting calendar event")
+                    "The message isn’t about deleting calendar event")
                 return ScResult.OK
 
             rrel_event_summary = ScKeynodes.resolve("rrel_event_summary", sc_type.CONST_NODE_ROLE)
@@ -115,7 +113,7 @@ class DeleteEventAgent(ScAgentClassic):
                 self.logger.info(f"Search error: {response.status_code} - {response.text}")
                 return ScResult.ERROR
         except requests.exceptions.ConnectionError:
-            self.logger.info(f"Finished with connection error")
+            self.logger.info("Finished with connection error")
             return ScResult.ERROR
 
     def delete_event(self, headers, event_id):
@@ -132,7 +130,7 @@ class DeleteEventAgent(ScAgentClassic):
             else:
                 raise Exception(f"Deletion error: {response.status_code} - {response.text}")
         except requests.exceptions.ConnectionError:
-            self.logger.info(f"Finished with connection error")
+            self.logger.info("Finished with connection error")
             return ScResult.ERROR
 
     def get_authenticated_token(self) -> str | None:

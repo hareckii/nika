@@ -3,14 +3,14 @@ from pathlib import Path
 from modules.messageProcessingModule.MessageProcessingModule import MessageProcessingModule
 from sc_client.client import search_by_template
 from sc_client.constants import sc_type
-from sc_client.models import ScTemplate, ScAddr
+from sc_client.models import ScTemplate
 from sc_kpm import ScKeynodes
 from sc_kpm.identifiers import CommonIdentifiers
 from sc_kpm.utils import get_edge, get_link_content_data
 from sc_kpm.utils.action_utils import execute_agent
 from tests.base_testcase import BaseTestCase
 
-from sc_kpm.identifiers import CommonIdentifiers, ActionStatus
+from sc_kpm.identifiers import ActionStatus
 
 WAIT_TIME = 5
 
