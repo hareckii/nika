@@ -7,6 +7,7 @@ const actionInitiated = 'action_initiated';
 const actionReplyToMessage = 'action_reply_to_message';
 const rrel1 = 'rrel_1';
 const rrel2 = 'rrel_2';
+const rrel3 = 'rrel_3';
 const nrelAuthors = 'nrel_authors';
 const conceptTextFile = 'concept_text_file';
 const langEn = 'lang_en';
@@ -20,6 +21,7 @@ const baseKeynodes = [
     { id: actionReplyToMessage, type: ScType.ConstNodeClass },
     { id: rrel1, type: ScType.ConstNodeRole },
     { id: rrel2, type: ScType.ConstNodeRole },
+    { id: rrel3, type: ScType.ConstNodeRole },
     { id: nrelAuthors, type: ScType.ConstNodeNonRole },
     { id: conceptTextFile, type: ScType.ConstNodeClass },
     { id: langEn, type: ScType.ConstNodeClass },
@@ -41,6 +43,7 @@ export const generateLinkText = async (messageText: string) => {
 const describeAgent = async (
     chatNode: ScAddr,
     author: ScAddr | string,
+    session_link: ScAddr | null,
     keynodes: Record<string, ScAddr>,
     linkAddr: ScAddr,
 ) => {
@@ -65,6 +68,16 @@ const describeAgent = async (
         ScType.VarPermPosArc,
         keynodes[rrel2],
     );
+    console.log("SESSION_LINK=", session_link?.value)
+    if (session_link != null){
+        template.quintuple(
+            actionNodeAlias,
+            ScType.VarPermPosArc,
+            session_link,
+            ScType.VarPermPosArc,
+            keynodes[rrel3],
+        );
+    }
     template.quintuple(
         actionNodeAlias,
         ScType.VarCommonArc,
@@ -91,10 +104,21 @@ const findNewMessageNode = async (circuitAddr: ScAddr) => {
     return null;
 };
 
-export const newMessageAgent = async (chatNode: ScAddr, author: ScAddr | string, linkAddr: ScAddr) => {
+export const newMessageAgent = async (
+    chatNode: ScAddr, 
+    author: ScAddr | string,
+    session_link: ScAddr | null, 
+    linkAddr: ScAddr
+) => {
     const keynodes = await client.resolveKeynodes(baseKeynodes);
 
-    const [template, userActionNodeAlias] = await describeAgent(chatNode, author, keynodes, linkAddr);
+    const [template, userActionNodeAlias] = await describeAgent(
+        chatNode,
+        author,
+        session_link, 
+        keynodes, 
+        linkAddr
+        );
 
     const circuitAddr = await makeAgent(template, userActionNodeAlias);
 

@@ -12,7 +12,7 @@ const setCookie = (name: string, value: string, days: number = 7) => {
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 };
 
-const getCookie = (name: string): string | null => {
+export const getCookie = (name: string): string | null => {
   const nameEQ = name + "=";
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
