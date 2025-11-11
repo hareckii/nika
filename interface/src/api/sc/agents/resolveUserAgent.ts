@@ -17,28 +17,30 @@ const baseKeynodes = [
 const getUser = async () => {
     const session = getCookie('google_session')
     if(!session) return null;
-    console.log("getUser Session:", session)
     
     const res = await client.searchLinksByContents([session])
     const session_link = res[0][0]
-    console.log("getUser Session_link before:", session_link)
     if(!session_link) return null;
-    console.log("getUser Session_link:", session_link)
 
     const keynodes = await client.resolveKeynodes(baseKeynodes);
     const user = '_user';
     const template = new ScTemplate();
+
     template.triple(
         keynodes[conceptUser],
         ScType.VarPermPosArc,
         [ScType.VarNode, user],
     );
+
     template.quintuple(
         user, ScType.VarCommonArc, session_link,
         ScType.VarPermPosArc, keynodes[nrelGoogleSession]
     )
+
     const result = await client.searchByTemplate(template);
+    
     if (result.length === 1) {
+        console.log("Successfully find user node!")
         return result[0].get(user);
     }
     return null;

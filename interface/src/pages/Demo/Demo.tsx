@@ -16,8 +16,10 @@ export const Demo = () => {
     const { initChat, sendMessage, isAgentAnswer, onFetching, messages, chatRef } = useChat(user);
     const onSend = useCallback(
         async (text: string) => {
-            if (!user) return;
-            await sendMessage(user, text);
+            const new_user = await resolveUserAgent();
+            if (!new_user) return;
+            setUser(new_user);
+            await sendMessage(new_user, text);
         },
         [user, sendMessage],
     );
