@@ -1,7 +1,11 @@
 import argparse
 from sc_kpm import ScServer
-from modules.messageProcessingModule.MessageProcessingModule import MessageProcessingModule
-from modules.google_integrations_module.auth.auth_module import GoogleAuthModule
+from modules import (
+    GoogleCalendarModule, 
+    GoogleAuthModule, 
+    MessageProcessingModule
+    )
+
 
 
 SC_SERVER_PROTOCOL = "protocol"
@@ -18,7 +22,11 @@ def main(args: dict):
         f"{args[SC_SERVER_PROTOCOL]}://{args[SC_SERVER_HOST]}:{args[SC_SERVER_PORT]}")
 
     with server.connect():
-        modules = [MessageProcessingModule(), GoogleAuthModule()]
+        modules = [
+            MessageProcessingModule(), 
+            GoogleAuthModule(),
+            GoogleCalendarModule(),
+            ]
         server.add_modules(*modules)
         with server.register_modules():
             server.serve()

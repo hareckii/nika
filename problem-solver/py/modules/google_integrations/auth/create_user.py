@@ -1,8 +1,10 @@
 import logging
 from os import getenv
 
-from dotenv import load_dotenv
 import requests
+from dotenv import load_dotenv
+from modules.google_integrations.auth.google_response import GoogleResponse
+from modules.google_integrations.auth.user import User
 from sc_client.client import generate_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScTemplate
@@ -15,8 +17,6 @@ from sc_kpm.utils.action_utils import (
     finish_action_with_status,
     get_action_arguments,
 )
-from modules.google_integrations_module.auth.google_response import GoogleResponse
-from modules.google_integrations_module.auth.user import User
 
 load_dotenv()
 
@@ -48,6 +48,9 @@ class CreateGoogleUser(ScAgentClassic):
         self.concept_user: ScAddr = ScKeynodes.resolve(
             "concept_user", sc_type.CONST_NODE_CLASS
         )
+        self.lang_en: ScAddr = ScKeynodes.resolve(
+            'lang_en', sc_type.CONST_NODE_CLASS
+            )
 
     def on_event(
         self, event_element: ScAddr, event_edge: ScAddr, action_element: ScAddr
@@ -66,33 +69,29 @@ class CreateGoogleUser(ScAgentClassic):
         try:
             self.logger.info("BEFORE GETTING")
             args = get_action_arguments(action_node, 2)
-            
+
             google_session_link = args[0]
             google_code_link = args[1]
-            
+
             google_session = get_link_content_data(google_session_link)
             self.logger.info(f"{google_session=}")
             google_code = get_link_content_data(google_code_link)
             self.logger.info(f"{google_code=}")
             response = self.get_response(google_code)
-            
-            self.logger.info(
-                f"{response.access_token=},\n {response.refresh_token=}"
-            )
+
+            self.logger.info(f"{response.access_token=},\n {response.refresh_token=}")
 
             user = self.get_user_info(response.access_token)
-            self.logger.info(
-                f"{user.name=}, {user.email=}"
-            )
+            self.logger.info(f"{user.name=}, {user.email=}")
             self.logger.info("BEFORE SAVING")
             self.save_user(response, user, google_session_link)
-            
+
         except Exception as e:
             self.logger.info(f"AddEventAgent: finished with an error {e}")
             return ScResult.ERROR
 
         return ScResult.OK
-    
+
     def get_response(self, code: str) -> GoogleResponse:
         # get access and refresh tokens by credentials
         base_url = "https://oauth2.googleapis.com/token"
@@ -128,41 +127,61 @@ class CreateGoogleUser(ScAgentClassic):
             self.logger.error(f"Key Error in response: {e}")
             self.logger.error(f"Full response: {res}")
             raise
-        
+
     def save_user(self, response: GoogleResponse, user: User, session_link: str):
         template = ScTemplate()
-        user_alias = '_user'
+        user_alias = "_user"
         self.generate_base_keynodes(user, response)
-        
-        #generate new user node
+
+        # generate new user node
         template.triple(
-            self.concept_user,
-            sc_type.VAR_PERM_POS_ARC,
+            self.concept_user, 
+            sc_type.VAR_PERM_POS_ARC, 
             sc_type.VAR_NODE >> user_alias
         )
-        #generate all links connected with this user
+        template.triple(
+            self.lang_en, 
+            sc_type.VAR_PERM_POS_ARC, 
+            session_link
+        )
+        # generate all links connected with this user
         template.quintuple(
-            user_alias, sc_type.VAR_COMMON_ARC, self.name_link,
-            sc_type.VAR_PERM_POS_ARC, self.nrel_name
+            user_alias,
+            sc_type.VAR_COMMON_ARC,
+            self.name_link,
+            sc_type.VAR_PERM_POS_ARC,
+            self.nrel_name,
         )
         template.quintuple(
-            user_alias, sc_type.VAR_COMMON_ARC, self.email_link,
-            sc_type.VAR_PERM_POS_ARC, self.nrel_email,
+            user_alias,
+            sc_type.VAR_COMMON_ARC,
+            self.email_link,
+            sc_type.VAR_PERM_POS_ARC,
+            self.nrel_email,
         )
         template.quintuple(
-            user_alias, sc_type.VAR_COMMON_ARC, self.acs_tkn_link,
-            sc_type.VAR_PERM_POS_ARC, self.nrel_access_token
+            user_alias,
+            sc_type.VAR_COMMON_ARC,
+            self.acs_tkn_link,
+            sc_type.VAR_PERM_POS_ARC,
+            self.nrel_access_token,
         )
         template.quintuple(
-            user_alias, sc_type.VAR_COMMON_ARC, self.ref_token_link,
-            sc_type.VAR_PERM_POS_ARC, self.nrel_refresh_token
+            user_alias,
+            sc_type.VAR_COMMON_ARC,
+            self.ref_token_link,
+            sc_type.VAR_PERM_POS_ARC,
+            self.nrel_refresh_token,
         )
         template.quintuple(
-            user_alias, sc_type.VAR_COMMON_ARC, session_link,
-            sc_type.VAR_PERM_POS_ARC, self.nrel_google_session,
+            user_alias,
+            sc_type.VAR_COMMON_ARC,
+            session_link,
+            sc_type.VAR_PERM_POS_ARC,
+            self.nrel_google_session,
         )
         generate_by_template(template)
-    
+
     def get_user_info(self, token: str) -> User:
         # get base user info(name and email)
         url = "https://www.googleapis.com/oauth2/v2/userinfo"
@@ -171,41 +190,38 @@ class CreateGoogleUser(ScAgentClassic):
             "Authorization": f"Bearer {token}",
             "Accept": "application/json",
         }
-        
+
         try:
             response = requests.get(url, headers=headers, timeout=30)
-            
+
             if not response.ok:
                 self.logger.error("User Info Error Details:")
                 self.logger.error(f"Status Code: {response.status_code}")
                 self.logger.error(f"URL: {response.url}")
                 self.logger.error(f"Response Headers: {dict(response.headers)}")
                 self.logger.error(f"Response Body: {response.text}")
-            
+
             response.raise_for_status()
 
             user_data = response.json()
             self.logger.info(f"Received user data: {user_data}")
-            
-            return User(
-                name=user_data['name'],
-                email=user_data['email']
-            )
-        
+
+            return User(name=user_data["name"], email=user_data["email"])
+
         except requests.exceptions.HTTPError as e:
             self.logger.error(f"HTTP Error in get_user_info: {e}")
             self.logger.error(f"Response Text: {response.text}")
             raise
-        
+
         except requests.exceptions.RequestException as e:
             self.logger.error(f"Request Error in get_user_info: {e}")
             raise
-        
+
         except KeyError as e:
             self.logger.error(f"Missing expected field in user data: {e}")
             self.logger.error(f"Available fields: {list(user_data.keys())}")
             raise
-        
+
     def generate_base_keynodes(self, user, response):
         # generate base user info links
         self.name_link = generate_link(user.name)
