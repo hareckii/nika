@@ -3,7 +3,7 @@ import logging
 
 import requests
 from sc_client.models import ScAddr
-from sc_kpm import ScKeynodes, ScResult
+from sc_kpm import ScResult
 from sc_kpm.utils import (
     get_link_content_data,
     search_element_by_role_relation,
@@ -14,7 +14,7 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google_integrations.calendar.models.event import Event
+from modules.google_integrations.calendar.models import CalendarDateTime, Event
 from modules.google_integrations.calendar.event_agent import EventAgent
 
 logging.basicConfig(
@@ -27,10 +27,7 @@ logging.basicConfig(
 class AddEventAgent(EventAgent):
     def __init__(self):
         super().__init__("action_add_calendar_event")
-        self.calendar_id = 'primary'
-        self.rrel_event_summary = ScKeynodes.get("rrel_event_summary")
-        self.rrel_start_time = ScKeynodes.get("rrel_start_time")
-        self.rrel_end_time = ScKeynodes.get("rrel_end_time")
+        
         self.logger.info("Found all necessary rrels")
         
         
@@ -60,7 +57,7 @@ class AddEventAgent(EventAgent):
 
         event = self.get_event_params(message_addr)
 
-        if not event:
+        if event is None:
             return ScResult.ERROR
 
         response = self.add_event_in_calendar(access_token, event)
@@ -93,61 +90,45 @@ class AddEventAgent(EventAgent):
         
         # search links content
         summary = get_link_content_data(summary_link)
-        start_time = datetime.fromisoformat(
-            get_link_content_data(start_time_link)
-        )
+        iso_start_time: str = get_link_content_data(start_time_link)
         
         event = Event(
             summary=summary, 
-            start_time=start_time
+            start=CalendarDateTime(dateTime=iso_start_time)
         )
         
         if end_time_link:
-            end_time = datetime.fromisoformat(
-                get_link_content_data(end_time_link)
-            )
-            if start_time > end_time:
+            iso_end_time: str = get_link_content_data(end_time_link)
+            
+            if (datetime.fromisoformat(iso_start_time) 
+                > datetime.fromisoformat(iso_end_time)):
                 self.logger.info("Invalid end date detected")
                 return None
-            event.end_time = end_time
-            
+            event.end = CalendarDateTime(dateTime=iso_end_time)
         return event
 
     def add_event_in_calendar(
         self,
         access_token: str,
         event: Event
-    ) -> ScResult:
+    ) -> bool:
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Accept": "application/json",
-        }
-        
-        event_dict = {
-            "summary": event.summary,
-            "start": {
-                "dateTime": event.start_time.isoformat(),
-                "timeZone": "Europe/Moscow",
-            },
-            "end": {
-                "dateTime": event.end_time.isoformat(),
-                "timeZone": "Europe/Moscow",
-            },
         }
         try:
             response = requests.post(
                 "https://www.googleapis.com/calendar/v3/calendars/"
                 f"{self.calendar_id}/events",
                 headers=headers,
-                json=event_dict,
+                json=event.model_dump(),
             )
-            self.logger.info(f"{response.status_code}")
             if response.status_code == 200:
                 return True
             else:
                 return False
         except requests.exceptions.ConnectionError:
             self.logger.info("Finished with connection error")
-            return ScResult.ERROR
+            return False
 
     

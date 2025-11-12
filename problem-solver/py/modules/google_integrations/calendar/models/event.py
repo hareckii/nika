@@ -2,15 +2,24 @@ from datetime import datetime, timedelta
 
 from pydantic import BaseModel, model_validator
 
-
-class Event(BaseModel):
+class CalendarDateTime(BaseModel):
+    dateTime: str # iso format  
+    timeZone: str = "Europe/Moscow"
+    
+class EventBase(BaseModel):
+    id: str | None = None
     summary: str
-    start_time: datetime
-    end_time: datetime | None = None
+    
+class Event(EventBase):
+    start: CalendarDateTime
+    end: CalendarDateTime | None = None
 
     # set end_time = start_time + 1 hour if end_time is none
     @model_validator(mode='after')
     def set_end_time(self) -> 'Event':
-        if self.end_time is None:
-            self.end_time = self.start_time + timedelta(hours=1)
+        if self.end is None:
+            end_time: datetime = datetime.fromisoformat(self.start.dateTime) 
+            + timedelta(hours=1)
+            iso_end_time: str = datetime.isoformat(end_time)
+            self.end = CalendarDateTime(dateTime=iso_end_time)
         return self
