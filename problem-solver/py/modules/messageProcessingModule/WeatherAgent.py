@@ -82,8 +82,6 @@ class WeatherAgent(ScAgentClassic):
                 self.set_unknown_city_link(action_node, answer_phrase)
                 return ScResult.OK
             city_idtf_link = self.get_ru_main_identifier(city_addr)
-            answer_city_idtf_link = search_element_by_non_role_relation(
-                src=city_addr, nrel_node=idtf)
             if not city_idtf_link.is_valid():
                 self.set_unknown_city_link(action_node, answer_phrase)
                 return ScResult.OK

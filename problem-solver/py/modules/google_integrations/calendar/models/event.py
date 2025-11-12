@@ -10,6 +10,9 @@ class EventBase(BaseModel):
     id: str | None = None
     summary: str
     
+    class Config:
+        extra = "ignore"
+    
 class Event(EventBase):
     start: CalendarDateTime
     end: CalendarDateTime | None = None

@@ -49,7 +49,6 @@ class AddEventAgent(EventAgent):
     def run(self, action_node: ScAddr) -> ScResult:
         self.logger.info("Started")
         message_addr, author_node = get_action_arguments(action_node, 2)
-        self.logger.info(f"{message_addr=}, {author_node=}")
         access_token = self.get_authenticated_token(author_node)
         if not access_token:
             self.logger.error("Do not get access token")
