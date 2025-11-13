@@ -74,7 +74,12 @@ export const useGoogleAuth = () => {
     // send request to google(get code param)
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const redirectUri = 'http://localhost:3033';
-    const scopes = ['email', 'profile', 'https://www.googleapis.com/auth/calendar'];
+    const scopes = [
+      'email', 
+      'profile', 
+      'https://www.googleapis.com/auth/calendar',
+      'https://mail.google.com/',
+    ];
     const responseType = 'code';
     
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
