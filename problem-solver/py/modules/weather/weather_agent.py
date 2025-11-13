@@ -58,7 +58,6 @@ class WeatherAgent(ScAgentClassic):
                     "WeatherAgent: the message isn’t about weather")
                 return ScResult.OK
 
-            idtf = ScKeynodes.resolve("nrel_idtf", sc_type.CONST_NODE_NON_ROLE)
             answer_phrase = ScKeynodes.resolve(
                 "show_weather_answer_phrase", sc_type.CONST_NODE_CLASS)
             rrel_entity = ScKeynodes.resolve("rrel_entity", sc_type.CONST_NODE_ROLE)
