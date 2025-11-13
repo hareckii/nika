@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from modules.google.calendar.models import EventBase
 from sc_client.models import ScAddr
 from sc_kpm import ScAgentClassic, ScKeynodes
 from sc_kpm.identifiers import CommonIdentifiers
@@ -11,8 +12,6 @@ from sc_kpm.utils.action_utils import (
     execute_agent,
     get_action_result,
 )
-
-from modules.google_integrations.calendar.models import EventBase
 
 
 class EventAgent(ScAgentClassic):
@@ -38,5 +37,5 @@ class EventAgent(ScAgentClassic):
             return None
 
     @abstractmethod
-    def get_event_params(self, message_addr: ScAddr) -> EventBase:
+    def get_event(self, message_addr: ScAddr) -> EventBase:
         pass

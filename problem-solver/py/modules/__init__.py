@@ -1,3 +1,3 @@
-from .google_integrations.auth.auth_module import GoogleAuthModule  # noqa: F401
-from .google_integrations.calendar.calendar_module import GoogleCalendarModule  # noqa: F401
-from .messageProcessingModule.MessageProcessingModule import MessageProcessingModule  # noqa: F401
+from modules.google.auth.auth_module import GoogleAuthModule  # noqa: F401
+from modules.google.calendar.calendar_module import GoogleCalendarModule  # noqa: F401
+from modules.weather.weather_module import WeatherModule  # noqa: F401

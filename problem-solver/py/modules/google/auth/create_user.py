@@ -3,8 +3,8 @@ from os import getenv
 
 import requests
 from dotenv import load_dotenv
-from modules.google_integrations.auth.google_response import GoogleResponse
-from modules.google_integrations.auth.user import User
+from modules.google.auth.google_response import GoogleResponse
+from modules.google.auth.user import User
 from sc_client.client import generate_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScTemplate
@@ -48,9 +48,7 @@ class CreateGoogleUser(ScAgentClassic):
         self.concept_user: ScAddr = ScKeynodes.resolve(
             "concept_user", sc_type.CONST_NODE_CLASS
         )
-        self.lang_en: ScAddr = ScKeynodes.resolve(
-            'lang_en', sc_type.CONST_NODE_CLASS
-            )
+        self.lang_en: ScAddr = ScKeynodes.resolve("lang_en", sc_type.CONST_NODE_CLASS)
 
     def on_event(
         self, event_element: ScAddr, event_edge: ScAddr, action_element: ScAddr
@@ -135,15 +133,9 @@ class CreateGoogleUser(ScAgentClassic):
 
         # generate new user node
         template.triple(
-            self.concept_user, 
-            sc_type.VAR_PERM_POS_ARC, 
-            sc_type.VAR_NODE >> user_alias
+            self.concept_user, sc_type.VAR_PERM_POS_ARC, sc_type.VAR_NODE >> user_alias
         )
-        template.triple(
-            self.lang_en, 
-            sc_type.VAR_PERM_POS_ARC, 
-            session_link
-        )
+        template.triple(self.lang_en, sc_type.VAR_PERM_POS_ARC, session_link)
         # generate all links connected with this user
         template.quintuple(
             user_alias,

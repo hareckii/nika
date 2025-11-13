@@ -3,7 +3,7 @@ from sc_kpm import ScServer
 from modules import (
     GoogleCalendarModule, 
     GoogleAuthModule, 
-    MessageProcessingModule
+    WeatherModule
     )
 
 
@@ -23,7 +23,7 @@ def main(args: dict):
 
     with server.connect():
         modules = [
-            MessageProcessingModule(), 
+            WeatherModule(), 
             GoogleAuthModule(),
             GoogleCalendarModule(),
             ]

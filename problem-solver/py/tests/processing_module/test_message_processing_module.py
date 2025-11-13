@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from modules.messageProcessingModule.MessageProcessingModule import MessageProcessingModule
+from modules.weather.weather_module import WeatherModule
 from sc_client.client import search_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScTemplate
@@ -46,7 +46,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 "test_message_is_not_about_weather.scs",
             )
         )
-        module = MessageProcessingModule()
+        module = WeatherModule()
         self.server.add_modules(module)
         with self.server.register_modules():
             message_node = ScKeynodes.resolve(
@@ -64,7 +64,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 "test_generate_message_by_unknown_city.scs",
             )
         )
-        module = MessageProcessingModule()
+        module = WeatherModule()
         self.server.add_modules(module)
         with self.server.register_modules():
             message_node = ScKeynodes.resolve(
@@ -97,7 +97,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 "test_generate_message_by_unknown_country.scs",
             )
         )
-        module = MessageProcessingModule()
+        module = WeatherModule()
         self.server.add_modules(module)
         with self.server.register_modules():
             message_node = ScKeynodes.resolve(
@@ -130,7 +130,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 "test_generate_message_by_known_city.scs",
             )
         )
-        module = MessageProcessingModule()
+        module = WeatherModule()
         self.server.add_modules(module)
         with self.server.register_modules():
             message_node = ScKeynodes.resolve(
@@ -174,7 +174,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 "test_generate_message_by_known_city_and_country.scs",
             )
         )
-        module = MessageProcessingModule()
+        module = WeatherModule()
         self.server.add_modules(module)
         with self.server.register_modules():
             message_node = ScKeynodes.resolve(

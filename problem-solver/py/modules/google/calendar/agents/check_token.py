@@ -1,7 +1,7 @@
 import logging
 
 import requests
-from modules.google_integrations.calendar.models.refresh_response import RefreshResponse
+from modules.google.calendar.models.refresh_response import RefreshResponse
 from sc_client.client import set_link_contents
 from sc_client.models import ScAddr, ScLinkContent, ScLinkContentType
 from sc_kpm import ScAgentClassic, ScKeynodes, ScResult
@@ -38,7 +38,7 @@ class CheckGoogleTokenAgent(ScAgentClassic):
         self.logger.error(f"{author=}")
         if not author.is_valid():
             return ScResult.ERROR
-        
+
         access_token_link = search_element_by_non_role_relation(
             author, self.nrel_access_token
         )

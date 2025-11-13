@@ -2,8 +2,8 @@ import logging
 from datetime import datetime, timezone
 
 import requests
-from modules.google_integrations.calendar.event_agent import EventAgent
-from modules.google_integrations.calendar.models import EventBase
+from modules.google.calendar.agents.event_agent import EventAgent
+from modules.google.calendar.models import EventBase
 from sc_client.models import ScAddr
 from sc_kpm import ScResult
 from sc_kpm.utils import (
@@ -15,8 +15,6 @@ from sc_kpm.utils.action_utils import (
     generate_action_result,
     get_action_arguments,
 )
-
-calendar_id = "primary"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,10 +28,7 @@ class DeleteEventAgent(EventAgent):
         super().__init__("action_delete_calendar_event")
 
     def on_event(
-        self, 
-        event_element: ScAddr, 
-        event_edge: ScAddr, 
-        action_element: ScAddr
+        self, event_element: ScAddr, event_edge: ScAddr, action_element: ScAddr
     ) -> ScResult:
         result = self.run(action_element)
         is_successful = result == ScResult.OK
@@ -51,32 +46,31 @@ class DeleteEventAgent(EventAgent):
             if not access_token:
                 self.logger.error("Do not get access token")
                 return ScResult.ERROR
-            
-            event = self.get_event_params(message_addr)    
+
+            event = self.get_event(message_addr)
             event_with_id = self.search_event(access_token, event)
             if not event_with_id:
                 self.logger.info("Do not find event in Google Calendar")
                 return ScResult.UNKNOWN
-            
+
             self.logger.info(f"Find event: {event_with_id.summary}")
-            
+
             deletion_result = self.delete_event(access_token, event_with_id)
             if deletion_result is not True:
                 self.logger.info("Do not delete event in Google Calendar")
                 return ScResult.ERROR
-            
+
             self.logger.info("Delete event")
-            
+
             summary_addr = search_element_by_role_relation(
-            message_addr, self.rrel_event_summary
+                message_addr, self.rrel_event_summary
             )
             generate_action_result(action_node, summary_addr)
             return ScResult.OK
-        
+
         except Exception as e:
             self.logger.info(f"Finished with an error {e}")
             return ScResult.ERROR
-        
 
     def search_event(self, access_token: str, event: EventBase):
         headers = {
@@ -91,8 +85,9 @@ class DeleteEventAgent(EventAgent):
             "singleEvents": "true",
             "orderBy": "startTime",
         }
-        url = ("https://www.googleapis.com/calendar/"
-            f"v3/calendars/{calendar_id}/events"
+        url = (
+            "https://www.googleapis.com/calendar/"
+            f"v3/calendars/{self.calendar_id}/events"
         )
         try:
             response = requests.get(
@@ -119,7 +114,7 @@ class DeleteEventAgent(EventAgent):
         }
         url = (
             f"https://www.googleapis.com/calendar/v3/"
-            f"calendars/{calendar_id}/"
+            f"calendars/{self.calendar_id}/"
             f"events/{event.id}"
         )
         try:
@@ -135,7 +130,7 @@ class DeleteEventAgent(EventAgent):
             self.logger.info("Finished with connection error")
             return False
 
-    def get_event_params(self, message_addr: ScAddr) -> EventBase:
+    def get_event(self, message_addr: ScAddr) -> EventBase:
         summary_link = search_element_by_role_relation(
             message_addr, self.rrel_event_summary
         )
