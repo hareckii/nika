@@ -83,15 +83,12 @@ class CreateGoogleUser(ScAgentClassic):
             self.logger.info("%s", google_code)
             response = self.get_response(google_code)
 
-            self.logger.info(f"{response.access_token=},\n {response.refresh_token=}")
-
             user = self.get_user_info(response.access_token)
             self.logger.info(f"{user.name=}, {user.email=}")
-            self.logger.info("BEFORE SAVING")
             self.save_user(response, user, google_session_link)
 
         except Exception as e:
-            self.logger.info("AddEventAgent: finished with an error %s", e)
+            self.logger.info("Finished with an error %s", e)
             return ScResult.ERROR
 
         return ScResult.OK
