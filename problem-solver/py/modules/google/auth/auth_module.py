@@ -1,6 +1,6 @@
 from sc_kpm import ScModule
-from .create_user import CreateGoogleUser
 
+from modules.google.auth.agents import CreateGoogleUser
 
 
 class GoogleAuthModule(ScModule):

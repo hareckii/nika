@@ -1,9 +1,9 @@
 import logging
+
 from datetime import datetime
 
 import requests
-from modules.google.calendar.agents.event_agent import EventAgent
-from modules.google.calendar.models import CalendarDateTime, Event
+
 from sc_client.models import ScAddr
 from sc_kpm import ScResult
 from sc_kpm.utils import (
@@ -15,6 +15,10 @@ from sc_kpm.utils.action_utils import (
     generate_action_result,
     get_action_arguments,
 )
+
+from modules.google.calendar.agents.event_agent import EventAgent
+from modules.google.calendar.models import CalendarDateTime, Event
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,18 +34,22 @@ class AddEventAgent(EventAgent):
         self.logger.info("Found all necessary rrels")
 
     def on_event(
-        self, event_element: ScAddr, event_edge: ScAddr, action_element: ScAddr
+        self,
+        event_element: ScAddr,  # noqa: ARG002
+        event_edge: ScAddr,  # noqa: ARG002
+        action_element: ScAddr,
     ) -> ScResult:
         try:
             result = self.run(action_element)
             is_successful = result == ScResult.OK
             finish_action_with_status(action_element, is_successful)
             self.logger.info(
-                "Finished %s", "successfully" if is_successful else "unsuccessfully"
+                "Finished %s",
+                "successfully" if is_successful else "unsuccessfully",
             )
             return result
         except Exception as e:
-            self.logger.error(f"End with error: {e}")
+            self.logger.error("End with error: %s", e)
 
     def run(self, action_node: ScAddr) -> ScResult:
         self.logger.info("Started")
@@ -63,7 +71,8 @@ class AddEventAgent(EventAgent):
             return ScResult.ERROR
 
         summary_addr = search_element_by_role_relation(
-            message_addr, self.rrel_event_summary
+            message_addr,
+            self.rrel_event_summary,
         )
         generate_action_result(action_node, summary_addr)
         return ScResult.OK
@@ -74,13 +83,16 @@ class AddEventAgent(EventAgent):
     ) -> Event:
         # search link addresses
         summary_link = search_element_by_role_relation(
-            message_addr, self.rrel_event_summary
+            message_addr,
+            self.rrel_event_summary,
         )
         start_time_link = search_element_by_role_relation(
-            message_addr, self.rrel_start_time
+            message_addr,
+            self.rrel_start_time,
         )
         end_time_link = search_element_by_role_relation(
-            message_addr, self.rrel_end_time
+            message_addr,
+            self.rrel_end_time,
         )
         self.logger.info("Found rrel nodes")
 
@@ -88,13 +100,15 @@ class AddEventAgent(EventAgent):
         summary = get_link_content_data(summary_link)
         iso_start_time: str = get_link_content_data(start_time_link)
 
-        event = Event(summary=summary, start=CalendarDateTime(dateTime=iso_start_time))
+        event = Event(
+            summary=summary, start=CalendarDateTime(dateTime=iso_start_time),
+        )
 
         if end_time_link:
             iso_end_time: str = get_link_content_data(end_time_link)
 
             if datetime.fromisoformat(iso_start_time) > datetime.fromisoformat(
-                iso_end_time
+                iso_end_time,
             ):
                 self.logger.info("Invalid end date detected")
                 return None
@@ -115,8 +129,7 @@ class AddEventAgent(EventAgent):
             )
             if response.status_code == 200:
                 return True
-            else:
-                return False
+            return False
         except requests.exceptions.ConnectionError:
             self.logger.info("Finished with connection error")
             return False

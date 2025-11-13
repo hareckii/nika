@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from modules.weather.weather_module import WeatherModule
@@ -5,12 +7,12 @@ from sc_client.client import search_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScTemplate
 from sc_kpm import ScKeynodes
-from sc_kpm.identifiers import CommonIdentifiers
+from sc_kpm.identifiers import ActionStatus, CommonIdentifiers
 from sc_kpm.utils import get_edge, get_link_content_data
 from sc_kpm.utils.action_utils import execute_agent
+
 from tests.base_testcase import BaseTestCase
 
-from sc_kpm.identifiers import ActionStatus
 
 WAIT_TIME = 5
 
@@ -20,14 +22,14 @@ class WeatherAgentTestCase(BaseTestCase):
     def setUpClass(cls) -> None:
         cls.tests_structures_dir_path = str(
             Path(Path(__file__).resolve().parent, "test_structures"))
-        
+
     def setUp(self):
         super().setUp()
         self.load_scs(
             Path(
                 self.tests_structures_dir_path,
                 "common.scs",
-            )
+            ),
         )
 
     def run_weather_agent(self, message_node):
@@ -44,7 +46,7 @@ class WeatherAgentTestCase(BaseTestCase):
             Path(
                 self.tests_structures_dir_path,
                 "test_message_is_not_about_weather.scs",
-            )
+            ),
         )
         module = WeatherModule()
         self.server.add_modules(module)
@@ -62,7 +64,7 @@ class WeatherAgentTestCase(BaseTestCase):
             Path(
                 self.tests_structures_dir_path,
                 "test_generate_message_by_unknown_city.scs",
-            )
+            ),
         )
         module = WeatherModule()
         self.server.add_modules(module)
@@ -95,7 +97,7 @@ class WeatherAgentTestCase(BaseTestCase):
             Path(
                 self.tests_structures_dir_path,
                 "test_generate_message_by_unknown_country.scs",
-            )
+            ),
         )
         module = WeatherModule()
         self.server.add_modules(module)
@@ -128,7 +130,7 @@ class WeatherAgentTestCase(BaseTestCase):
             Path(
                 self.tests_structures_dir_path,
                 "test_generate_message_by_known_city.scs",
-            )
+            ),
         )
         module = WeatherModule()
         self.server.add_modules(module)
@@ -146,7 +148,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 sc_type.VAR_PERM_POS_ARC,
                 sc_type.VAR_NODE,
                 sc_type.VAR_PERM_POS_ARC,
-                rrel_entity
+                rrel_entity,
             )
             search_results = search_by_template(template)
             self.assertEqual(len(search_results), 1)
@@ -161,7 +163,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 sc_type.VAR_COMMON_ARC,
                 sc_type.VAR_NODE_LINK,
                 sc_type.VAR_PERM_POS_ARC,
-                nrel_temperature
+                nrel_temperature,
             )
             search_results = search_by_template(template)
             self.assertEqual(len(search_results), 1)
@@ -172,7 +174,7 @@ class WeatherAgentTestCase(BaseTestCase):
             Path(
                 self.tests_structures_dir_path,
                 "test_generate_message_by_known_city_and_country.scs",
-            )
+            ),
         )
         module = WeatherModule()
         self.server.add_modules(module)
@@ -190,7 +192,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 sc_type.VAR_PERM_POS_ARC,
                 sc_type.VAR_NODE,
                 sc_type.VAR_PERM_POS_ARC,
-                rrel_entity
+                rrel_entity,
             )
             search_results = search_by_template(template)
             self.assertEqual(len(search_results), 2)
@@ -213,7 +215,7 @@ class WeatherAgentTestCase(BaseTestCase):
                 sc_type.VAR_COMMON_ARC,
                 sc_type.VAR_NODE_LINK,
                 sc_type.VAR_PERM_POS_ARC,
-                nrel_temperature
+                nrel_temperature,
             )
             search_results = search_by_template(template)
             self.assertEqual(len(search_results), 1)

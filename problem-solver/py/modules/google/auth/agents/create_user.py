@@ -1,10 +1,10 @@
 import logging
+
 from os import getenv
 
 import requests
+
 from dotenv import load_dotenv
-from modules.google.auth.google_response import GoogleResponse
-from modules.google.auth.user import User
 from sc_client.client import generate_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScTemplate
@@ -17,6 +17,9 @@ from sc_kpm.utils.action_utils import (
     finish_action_with_status,
     get_action_arguments,
 )
+
+from modules.google.auth.models import GoogleResponse, User
+
 
 load_dotenv()
 
@@ -31,33 +34,36 @@ class CreateGoogleUser(ScAgentClassic):
     def __init__(self):
         super().__init__("action_create_google_user")
         self.nrel_name: ScAddr = ScKeynodes.resolve(
-            "nrel_name", sc_type.CONST_NODE_NON_ROLE
+            "nrel_name", sc_type.CONST_NODE_NON_ROLE,
         )
         self.nrel_email: ScAddr = ScKeynodes.resolve(
-            "nrel_email", sc_type.CONST_NODE_NON_ROLE
+            "nrel_email", sc_type.CONST_NODE_NON_ROLE,
         )
         self.nrel_access_token: ScAddr = ScKeynodes.resolve(
-            "nrel_access_token", sc_type.CONST_NODE_NON_ROLE
+            "nrel_access_token", sc_type.CONST_NODE_NON_ROLE,
         )
         self.nrel_refresh_token: ScAddr = ScKeynodes.resolve(
-            "nrel_refresh_token", sc_type.CONST_NODE_NON_ROLE
+            "nrel_refresh_token", sc_type.CONST_NODE_NON_ROLE,
         )
         self.nrel_google_session: ScAddr = ScKeynodes.resolve(
-            "nrel_google_session", sc_type.CONST_NODE_NON_ROLE
+            "nrel_google_session", sc_type.CONST_NODE_NON_ROLE,
         )
         self.concept_user: ScAddr = ScKeynodes.resolve(
-            "concept_user", sc_type.CONST_NODE_CLASS
+            "concept_user", sc_type.CONST_NODE_CLASS,
         )
         self.lang_en: ScAddr = ScKeynodes.resolve("lang_en", sc_type.CONST_NODE_CLASS)
 
     def on_event(
-        self, event_element: ScAddr, event_edge: ScAddr, action_element: ScAddr
+        self,
+        event_element: ScAddr,  # noqa: ARG002
+        event_edge: ScAddr,  # noqa: ARG002
+        action_element: ScAddr,
     ) -> ScResult:
         result = self.run(action_element)
         is_successful = result == ScResult.OK
         finish_action_with_status(action_element, is_successful)
         self.logger.info(
-            "Finished %s", "successfully" if is_successful else "unsuccessfully"
+            "Finished %s", "successfully" if is_successful else "unsuccessfully",
         )
         return result
 
@@ -72,9 +78,9 @@ class CreateGoogleUser(ScAgentClassic):
             google_code_link = args[1]
 
             google_session = get_link_content_data(google_session_link)
-            self.logger.info(f"{google_session=}")
+            self.logger.info("%s", google_session)
             google_code = get_link_content_data(google_code_link)
-            self.logger.info(f"{google_code=}")
+            self.logger.info("%s", google_code)
             response = self.get_response(google_code)
 
             self.logger.info(f"{response.access_token=},\n {response.refresh_token=}")
@@ -85,7 +91,7 @@ class CreateGoogleUser(ScAgentClassic):
             self.save_user(response, user, google_session_link)
 
         except Exception as e:
-            self.logger.info(f"AddEventAgent: finished with an error {e}")
+            self.logger.info("AddEventAgent: finished with an error %s", e)
             return ScResult.ERROR
 
         return ScResult.OK
@@ -108,22 +114,22 @@ class CreateGoogleUser(ScAgentClassic):
             response.raise_for_status()
             res = response.json()
             return GoogleResponse(
-                access_token=res["access_token"], refresh_token=res["refresh_token"]
+                access_token=res["access_token"], refresh_token=res["refresh_token"],
             )
 
         except requests.exceptions.HTTPError as e:
-            self.logger.error(f"HTTP Error: {e}")
+            self.logger.error("HTTP Error: %s", e)
             self.logger.error(f"Status Code: {response.status_code}")
             self.logger.error(f"Response Text: {response.text}")
             raise
 
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"Request Error: {e}")
+            self.logger.error("Request Error: %s", e)
             raise
 
         except KeyError as e:
-            self.logger.error(f"Key Error in response: {e}")
-            self.logger.error(f"Full response: {res}")
+            self.logger.error("Key Error in response: %s", e)
+            self.logger.error("Full response: %s", res)
             raise
 
     def save_user(self, response: GoogleResponse, user: User, session_link: str):
@@ -133,7 +139,7 @@ class CreateGoogleUser(ScAgentClassic):
 
         # generate new user node
         template.triple(
-            self.concept_user, sc_type.VAR_PERM_POS_ARC, sc_type.VAR_NODE >> user_alias
+            self.concept_user, sc_type.VAR_PERM_POS_ARC, sc_type.VAR_NODE >> user_alias,
         )
         template.triple(self.lang_en, sc_type.VAR_PERM_POS_ARC, session_link)
         # generate all links connected with this user
@@ -196,21 +202,21 @@ class CreateGoogleUser(ScAgentClassic):
             response.raise_for_status()
 
             user_data = response.json()
-            self.logger.info(f"Received user data: {user_data}")
+            self.logger.info("Received user data: %s", user_data)
 
             return User(name=user_data["name"], email=user_data["email"])
 
         except requests.exceptions.HTTPError as e:
-            self.logger.error(f"HTTP Error in get_user_info: {e}")
+            self.logger.error("HTTP Error in get_user_info: %s", e)
             self.logger.error(f"Response Text: {response.text}")
             raise
 
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"Request Error in get_user_info: {e}")
+            self.logger.error("Request Error in get_user_info: %s", e)
             raise
 
         except KeyError as e:
-            self.logger.error(f"Missing expected field in user data: {e}")
+            self.logger.error("Missing expected field in user data: %s", e)
             self.logger.error(f"Available fields: {list(user_data.keys())}")
             raise
 

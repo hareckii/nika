@@ -1,6 +1,5 @@
 from abc import abstractmethod
 
-from modules.google.calendar.models import EventBase
 from sc_client.models import ScAddr
 from sc_kpm import ScAgentClassic, ScKeynodes
 from sc_kpm.identifiers import CommonIdentifiers
@@ -12,6 +11,8 @@ from sc_kpm.utils.action_utils import (
     execute_agent,
     get_action_result,
 )
+
+from modules.google.calendar.models import EventBase
 
 
 class EventAgent(ScAgentClassic):
@@ -33,8 +34,7 @@ class EventAgent(ScAgentClassic):
             token_link = ScStructure(set_node=result_struct).elements_set.pop()
             token = get_link_content_data(token_link)
             return token
-        else:
-            return None
+        return None
 
     @abstractmethod
     def get_event(self, message_addr: ScAddr) -> EventBase:

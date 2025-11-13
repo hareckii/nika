@@ -2,9 +2,9 @@ from sc_kpm import ScModule
 
 from modules.google.calendar.agents import (
     AddEventAgent,
+    CheckGoogleTokenAgent,
     DeleteEventAgent,
     UpdateEventAgent,
-    CheckGoogleTokenAgent,
 )
 
 
@@ -14,5 +14,5 @@ class GoogleCalendarModule(ScModule):
             AddEventAgent(),
             CheckGoogleTokenAgent(),
             DeleteEventAgent(),
-            UpdateEventAgent()
+            UpdateEventAgent(),
         )
