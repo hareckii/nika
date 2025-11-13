@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from pydantic import BaseModel, model_validator
 
 class CalendarDateTime(BaseModel):
-    dateTime: str # iso format  
+    dateTime: str | None = None # iso format  
     timeZone: str = "Europe/Moscow"
     
 class EventBase(BaseModel):
@@ -26,3 +26,8 @@ class Event(EventBase):
             iso_end_time: str = datetime.isoformat(end_time)
             self.end = CalendarDateTime(dateTime=iso_end_time)
         return self
+    
+class UpdateEvent(EventBase):
+    summary: str | None = None
+    start: CalendarDateTime | None = None
+    end: CalendarDateTime | None = None
