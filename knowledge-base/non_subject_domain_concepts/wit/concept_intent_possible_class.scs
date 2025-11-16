@@ -39,6 +39,6 @@ concept_intent_possible_class
 -> concept_message_about_skill;
 -> concept_update_calendar_event_message;
 -> concept_delete_calendar_event_message;
--> concept_get_calendar_event_message;
 -> concept_add_calendar_event_message;
--> concept_get_calendar_event_message;;
+-> concept_send_mail_message;
+-> concept_create_contact_message;;

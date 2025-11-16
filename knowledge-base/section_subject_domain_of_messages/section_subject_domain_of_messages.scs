@@ -20,6 +20,8 @@ section_subject_domain_of_messages = [*
             rrel_entity;
         ->rrel_not_maximum_studied_object_class:
             concept_add_calendar_event_message;
+            concept_send_mail_message;
+            concept_create_contact_message;
             concept_delete_calendar_event_message;
             concept_update_calendar_event_message;
             concept_get_calendar_event_message;
