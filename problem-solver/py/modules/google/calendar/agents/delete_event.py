@@ -16,7 +16,7 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.calendar.agents.event_agent import EventAgent
+from modules.google.calendar.agents.event_agent import CalendarAgent
 from modules.google.calendar.models import EventBase
 
 
@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 
 
-class DeleteEventAgent(EventAgent):
+class DeleteEventAgent(CalendarAgent):
     def __init__(self):
         super().__init__("action_delete_calendar_event")
 
@@ -37,49 +37,62 @@ class DeleteEventAgent(EventAgent):
         event_edge: ScAddr,  # noqa: ARG002
         action_element: ScAddr,
     ) -> ScResult:
-        result = self.run(action_element)
-        is_successful = result == ScResult.OK
-        finish_action_with_status(action_element, is_successful)
-        self.logger.info(
-            "Finished %s",
-            "successfully" if is_successful else "unsuccessfully",
-        )
-        return result
-
-    def run(self, action_node: ScAddr) -> ScResult:
         try:
-            self.logger.info("Started")
-            message_addr, author_node = get_action_arguments(action_node, 2)
-            access_token = self.get_authenticated_token(author_node)
-            if not access_token:
-                self.logger.error("Do not get access token")
-                return ScResult.ERROR
-
-            event = self.get_event(message_addr)
-            event_with_id = self.search_event(access_token, event)
-            if not event_with_id:
-                self.logger.info("Do not find event in Google Calendar")
-                return ScResult.UNKNOWN
-
-            self.logger.info(f"Find event: {event_with_id.summary}")
-
-            deletion_result = self.delete_event(access_token, event_with_id)
-            if deletion_result is not True:
-                self.logger.info("Do not delete event in Google Calendar")
-                return ScResult.ERROR
-
-            self.logger.info("Delete event")
-
-            summary_addr = search_element_by_role_relation(
-                message_addr,
-                self.rrel_event_summary,
+            result = self.run(action_element)
+            is_successful = result == ScResult.OK
+            finish_action_with_status(action_element, is_successful)
+            self.logger.info(
+                "Finished %s",
+                "successfully" if is_successful else "unsuccessfully",
             )
-            generate_action_result(action_node, summary_addr)
-            return ScResult.OK
-
+            return result
         except Exception as e:
             self.logger.info("Finished with an error %s", e)
             return ScResult.ERROR
+
+    def run(self, action_node: ScAddr) -> ScResult:
+        self.logger.info("Started")
+        message_addr, self.author_node = get_action_arguments(
+            action_node,
+            2,
+        )
+        author = self.get_author()
+        if author is None:
+            self.logger.error("Did not get author")
+            return ScResult.ERROR
+        if not message_addr:
+            self.logger.error("Did not have message address")
+            return ScResult.ERROR
+
+        event = self.get_event(message_addr)
+
+        if event is None:
+            self.logger.error("Did not get event")
+            return ScResult.ERROR
+
+        event_with_id = self.search_event(author.access_token, event)
+        if not event_with_id:
+            self.logger.info("Did not find event in Google Calendar")
+            return ScResult.UNKNOWN
+
+        self.logger.info(f"Find event: {event_with_id.summary}")
+
+        deletion_result = self.delete_event(
+            author.access_token,
+            event_with_id,
+        )
+        if deletion_result is not True:
+            self.logger.info("Did not delete event in Google Calendar")
+            return ScResult.ERROR
+
+        self.logger.info("Delete event")
+
+        summary_addr = search_element_by_role_relation(
+            message_addr,
+            self.rrel_event_summary,
+        )
+        generate_action_result(action_node, summary_addr)
+        return ScResult.OK
 
     def search_event(self, access_token: str, event: EventBase):
         headers = {
@@ -89,7 +102,8 @@ class DeleteEventAgent(EventAgent):
         params = {
             "q": event.summary,
             "maxResults": 1,
-            "timeMin": datetime.now(UTC).replace(tzinfo=None).isoformat() + "Z",
+            "timeMin": datetime.now(UTC).replace(tzinfo=None).isoformat()
+            + "Z",
             "singleEvents": "true",
             "orderBy": "startTime",
         }

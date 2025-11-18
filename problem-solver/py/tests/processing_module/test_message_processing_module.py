@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from modules.weather.weather_module import WeatherModule
 from sc_client.client import search_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScTemplate
@@ -11,6 +10,7 @@ from sc_kpm.identifiers import ActionStatus, CommonIdentifiers
 from sc_kpm.utils import get_edge, get_link_content_data
 from sc_kpm.utils.action_utils import execute_agent
 
+from modules.weather.weather_module import WeatherModule
 from tests.base_testcase import BaseTestCase
 
 

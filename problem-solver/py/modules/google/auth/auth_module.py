@@ -1,8 +1,10 @@
 from sc_kpm import ScModule
 
 from modules.google.auth.agents import (
+    CheckGoogleTokenAgent,
     CreateContactAgent,
     CreateGoogleUser,
+    FindContactAgent,
 )
 
 
@@ -11,4 +13,6 @@ class GoogleAuthModule(ScModule):
         super().__init__(
             CreateGoogleUser(),
             CreateContactAgent(),
+            CheckGoogleTokenAgent(),
+            FindContactAgent(),
         )

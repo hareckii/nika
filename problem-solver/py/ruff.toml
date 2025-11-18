@@ -1,6 +1,6 @@
 # ===== ОСНОВНЫЕ НАСТРОЙКИ =====
 target-version = "py311"
-line-length = 80
+line-length = 75
 indent-width = 4
 
 # Игнорируемые файлы и папки

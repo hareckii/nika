@@ -1,7 +1,14 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, EmailStr
 
 
-@dataclass
-class User:
+class User(BaseModel):
     name: str
-    email: str
+    email: EmailStr
+
+    def __str__(self):
+        return f"User<name={self.name}, email={self.email}>"
+
+
+class Author(User):
+    access_token: str
+    refresh_token: str | None = None

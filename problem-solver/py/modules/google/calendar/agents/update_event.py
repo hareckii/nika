@@ -16,7 +16,7 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.calendar.agents.event_agent import EventAgent
+from modules.google.calendar.agents.event_agent import CalendarAgent
 from modules.google.calendar.models import (
     CalendarDateTime,
     EventBase,
@@ -31,10 +31,12 @@ logging.basicConfig(
 )
 
 
-class UpdateEventAgent(EventAgent):
+class UpdateEventAgent(CalendarAgent):
     def __init__(self):
         super().__init__("action_update_calendar_event")
-        self.rrel_new_event_summary = ScKeynodes.get("rrel_new_event_summary")
+        self.rrel_new_event_summary = ScKeynodes.get(
+            "rrel_new_event_summary",
+        )
 
     def on_event(
         self,
@@ -42,42 +44,55 @@ class UpdateEventAgent(EventAgent):
         event_edge: ScAddr,  # noqa: ARG002
         action_element: ScAddr,
     ) -> ScResult:
-        result = self.run(action_element)
-        is_successful = result != ScResult.ERROR
-        finish_action_with_status(action_element, is_successful)
-        self.logger.info(
-            "Finished %s",
-            "successfully" if is_successful else "unsuccessfully",
-        )
-        return result
-
-    def run(self, action_node: ScAddr) -> ScResult:
         try:
-            self.logger.info("Started")
-            message_addr, author_node = get_action_arguments(action_node, 2)
-            access_token = self.get_authenticated_token(author_node)
-            if not access_token:
-                self.logger.error("Do not get access token")
-                return ScResult.ERROR
-
-            old_event = self.get_event(message_addr)
-            new_event = self.get_new_event(message_addr)
-            event_with_id = self.search_event(access_token, old_event)
-            if event_with_id is None:
-                self.logger.info("Event hasn't been found in Google Calendar")
-                return ScResult.ERROR
-            self.logger.info(f"Found event: {event_with_id.summary}")
-
-            res = self.update_event(access_token, event_with_id, new_event)
-            if res is None:
-                self.logger.error("Do not update event!")
-                return ScResult.ERROR
-            self.logger.error("New event %s", res)
-            # check other parameters
-
+            result = self.run(action_element)
+            is_successful = result != ScResult.ERROR
+            finish_action_with_status(action_element, is_successful)
+            self.logger.info(
+                "Finished %s",
+                "successfully" if is_successful else "unsuccessfully",
+            )
+            return result
         except Exception as e:
             self.logger.info("Finished with an error %s", e)
             return ScResult.ERROR
+
+    def run(self, action_node: ScAddr) -> ScResult:
+        self.logger.info("Started")
+        message_addr, self.author_node = get_action_arguments(
+            action_node,
+            2,
+        )
+        author = self.get_author()
+        if author is None:
+            self.logger.error("Did not get author")
+            return ScResult.ERROR
+        if not message_addr:
+            self.logger.error("Did not have message address")
+            return ScResult.ERROR
+
+        event = self.get_event(message_addr)
+
+        if event is None:
+            self.logger.error("Did not get event")
+            return ScResult.ERROR
+        new_event = self.get_new_event(message_addr)
+        event_with_id = self.search_event(author.access_token, event)
+        if event_with_id is None:
+            self.logger.info("Event hasn't been found in Google Calendar")
+            return ScResult.ERROR
+        self.logger.info(f"Found event: {event_with_id.summary}")
+
+        res = self.update_event(
+            author.access_token,
+            event_with_id,
+            new_event,
+        )
+        if res is None:
+            self.logger.error("Do not update event!")
+            return ScResult.ERROR
+        self.logger.error("New event %s", res)
+        # check other parameters
 
         summary_addr = search_element_by_role_relation(
             message_addr,
@@ -87,7 +102,9 @@ class UpdateEventAgent(EventAgent):
         return ScResult.OK
 
     def search_event(
-        self, access_token: str, event: EventBase,
+        self,
+        access_token: str,
+        event: EventBase,
     ) -> EventBase | None:
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -96,7 +113,8 @@ class UpdateEventAgent(EventAgent):
         params = {
             "q": event.summary,
             "maxResults": 1,
-            "timeMin": datetime.now(UTC).replace(tzinfo=None).isoformat() + "Z",
+            "timeMin": datetime.now(UTC).replace(tzinfo=None).isoformat()
+            + "Z",
             "singleEvents": "true",
             "orderBy": "startTime",
         }
@@ -148,7 +166,9 @@ class UpdateEventAgent(EventAgent):
                 new_event.start = old_event.start
 
             response = requests.patch(
-                url, headers=headers, json=new_event.model_dump(),
+                url,
+                headers=headers,
+                json=new_event.model_dump(),
             )
 
             if response.status_code == 200:
@@ -203,7 +223,9 @@ class UpdateEventAgent(EventAgent):
 
         event = UpdateEvent(
             summary=summary,
-            start=CalendarDateTime(dateTime=start_time if start_time else None),
+            start=CalendarDateTime(
+                dateTime=start_time if start_time else None,
+            ),
             end=CalendarDateTime(dateTime=end_time if end_time else None),
         )
 

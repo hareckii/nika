@@ -43,17 +43,17 @@ class CheckGoogleTokenAgent(ScAgentClassic):
         if not (GOOGLE_CLIENT_SECRET and GOOGLE_CLIENT_SECRET):
             return ScResult.ERROR
 
-        author = get_action_arguments(action_element, 1)[0]
-        self.logger.error("%s", author)
-        if not author.is_valid():
+        self.author_node = get_action_arguments(action_element, 1)[0]
+        self.logger.error("%s", self.author_node)
+        if not self.author_node.is_valid():
             return ScResult.ERROR
 
         access_token_link = search_element_by_non_role_relation(
-            author,
+            self.author_node,
             self.nrel_access_token,
         )
         refresh_token_link = search_element_by_non_role_relation(
-            author,
+            self.author_node,
             self.nrel_refresh_token,
         )
 
@@ -116,7 +116,9 @@ class CheckGoogleTokenAgent(ScAgentClassic):
             response = requests.post(
                 TOKEN_URL,
                 data=payload,
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
                 timeout=30,
             )
 
@@ -140,9 +142,11 @@ class CheckGoogleTokenAgent(ScAgentClassic):
             return RefreshResponse(success=False, error="Request timeout")
         except requests.exceptions.RequestException as e:
             return RefreshResponse(
-                success=False, error=f"Request failed: {e!s}",
+                success=False,
+                error=f"Request failed: {e!s}",
             )
         except KeyError:
             return RefreshResponse(
-                success=False, error="Invalid response format",
+                success=False,
+                error="Invalid response format",
             )

@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import argparse
 
-from modules import GoogleAuthModule, GoogleCalendarModule, WeatherModule
 from sc_kpm import ScServer
+
+from modules import (
+    GoogleAuthModule,
+    GoogleCalendarModule,
+    WeatherModule,
+)
 
 
 SC_SERVER_PROTOCOL = "protocol"

@@ -1,10 +1,7 @@
 import logging
 
-from os import getenv
-
 import requests
 
-from dotenv import load_dotenv
 from sc_client.client import generate_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScTemplate
@@ -18,10 +15,9 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.auth.models import GoogleResponse, User
+from modules.google.auth.models import Author
+from secrets_env import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 
-
-load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -59,41 +55,37 @@ class CreateGoogleUser(ScAgentClassic):
         event_edge: ScAddr,  # noqa: ARG002
         action_element: ScAddr,
     ) -> ScResult:
-        result = self.run(action_element)
-        is_successful = result == ScResult.OK
-        finish_action_with_status(action_element, is_successful)
-        self.logger.info(
-            "Finished %s", "successfully" if is_successful else "unsuccessfully",
-        )
-        return result
-
-    def run(self, action_node: ScAddr) -> ScResult:
-        self.logger.info("Started create user agent")
-
         try:
-            self.logger.info("BEFORE GETTING")
-            args = get_action_arguments(action_node, 2)
-
-            google_session_link = args[0]
-            google_code_link = args[1]
-
-            google_session = get_link_content_data(google_session_link)
-            self.logger.info("%s", google_session)
-            google_code = get_link_content_data(google_code_link)
-            self.logger.info("%s", google_code)
-            response = self.get_response(google_code)
-
-            user = self.get_user_info(response.access_token)
-            self.logger.info(f"{user.name=}, {user.email=}")
-            self.save_user(response, user, google_session_link)
-
+            result = self.run(action_element)
+            is_successful = result == ScResult.OK
+            finish_action_with_status(action_element, is_successful)
+            self.logger.info(
+                "Finished %s",
+                "successfully" if is_successful else "unsuccessfully",
+            )
+            return result
         except Exception as e:
             self.logger.info("Finished with an error %s", e)
             return ScResult.ERROR
 
+    def run(self, action_node: ScAddr) -> ScResult:
+        self.logger.info("Started!")
+        args = get_action_arguments(action_node, 2)
+
+        google_session_link = args[0]
+        google_code_link = args[1]
+
+        google_code = get_link_content_data(google_code_link)
+        access_token, refresh_token = self.get_tokens(google_code)
+
+        author = self.get_author(access_token)
+        author.refresh_token = refresh_token
+        self.logger.info("%s", author)
+        self.save_author(author, google_session_link)
+
         return ScResult.OK
 
-    def get_response(self, code: str) -> GoogleResponse:
+    def get_tokens(self, code: str) -> tuple[str]:
         # get access and refresh tokens by credentials
         base_url = "https://oauth2.googleapis.com/token"
 
@@ -101,8 +93,8 @@ class CreateGoogleUser(ScAgentClassic):
             response = requests.post(
                 url=base_url,
                 data={
-                    "client_id": getenv("GOOGLE_CLIENT_ID"),
-                    "client_secret": getenv("GOOGLE_CLIENT_SECRET"),
+                    "client_id": GOOGLE_CLIENT_ID,
+                    "client_secret": GOOGLE_CLIENT_SECRET,
                     "code": code,
                     "grant_type": "authorization_code",
                     "redirect_uri": "http://localhost:3033",
@@ -110,14 +102,11 @@ class CreateGoogleUser(ScAgentClassic):
             )
             response.raise_for_status()
             res = response.json()
-            return GoogleResponse(
-                access_token=res["access_token"], refresh_token=res["refresh_token"],
-            )
+            return (res["access_token"], res["refresh_token"])
 
         except requests.exceptions.HTTPError as e:
             self.logger.error("HTTP Error: %s", e)
-            self.logger.error(f"Status Code: {response.status_code}")
-            self.logger.error(f"Response Text: {response.text}")
+            self.logger.error("Status Code: %s", response.status_code)
             raise
 
         except requests.exceptions.RequestException as e:
@@ -129,16 +118,26 @@ class CreateGoogleUser(ScAgentClassic):
             self.logger.error("Full response: %s", res)
             raise
 
-    def save_user(self, response: GoogleResponse, user: User, session_link: str):
+    def save_author(
+        self,
+        author: Author,
+        session_link: str,
+        ):
         template = ScTemplate()
         user_alias = "_user"
-        self.generate_base_keynodes(user, response)
+        self.generate_base_keynodes(author)
 
         # generate new user node
         template.triple(
-            self.concept_user, sc_type.VAR_PERM_POS_ARC, sc_type.VAR_NODE >> user_alias,
+            self.concept_user,
+            sc_type.VAR_PERM_POS_ARC,
+            sc_type.VAR_NODE >> user_alias,
         )
-        template.triple(self.lang_en, sc_type.VAR_PERM_POS_ARC, session_link)
+        template.triple(
+            self.lang_en,
+            sc_type.VAR_PERM_POS_ARC,
+            session_link,
+            )
         # generate all links connected with this user
         template.quintuple(
             user_alias,
@@ -177,7 +176,7 @@ class CreateGoogleUser(ScAgentClassic):
         )
         generate_by_template(template)
 
-    def get_user_info(self, token: str) -> User:
+    def get_author(self, token: str) -> Author:
         # get base user info(name and email)
         url = "https://www.googleapis.com/oauth2/v2/userinfo"
 
@@ -193,15 +192,16 @@ class CreateGoogleUser(ScAgentClassic):
                 self.logger.error("User Info Error Details:")
                 self.logger.error(f"Status Code: {response.status_code}")
                 self.logger.error(f"URL: {response.url}")
-                self.logger.error(f"Response Headers: {dict(response.headers)}")
-                self.logger.error(f"Response Body: {response.text}")
 
             response.raise_for_status()
 
             user_data = response.json()
-            self.logger.info("Received user data: %s", user_data)
 
-            return User(name=user_data["name"], email=user_data["email"])
+            return Author(
+                name=user_data["name"],
+                email=user_data["email"],
+                access_token=token,
+                )
 
         except requests.exceptions.HTTPError as e:
             self.logger.error("HTTP Error in get_user_info: %s", e)
@@ -217,10 +217,10 @@ class CreateGoogleUser(ScAgentClassic):
             self.logger.error(f"Available fields: {list(user_data.keys())}")
             raise
 
-    def generate_base_keynodes(self, user, response):
+    def generate_base_keynodes(self, author):
         # generate base user info links
-        self.name_link = generate_link(user.name)
-        self.acs_tkn_link = generate_link(response.access_token)
-        self.ref_token_link = generate_link(response.refresh_token)
+        self.name_link = generate_link(author.name)
+        self.acs_tkn_link = generate_link(author.access_token)
+        self.ref_token_link = generate_link(author.refresh_token)
 
-        self.email_link = generate_link(user.email)
+        self.email_link = generate_link(author.email)

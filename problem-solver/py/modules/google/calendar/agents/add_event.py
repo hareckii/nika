@@ -16,7 +16,7 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.calendar.agents.event_agent import EventAgent
+from modules.google.calendar.agents.event_agent import CalendarAgent
 from modules.google.calendar.models import CalendarDateTime, Event
 
 
@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 
 
-class AddEventAgent(EventAgent):
+class AddEventAgent(CalendarAgent):
     def __init__(self):
         super().__init__("action_add_calendar_event")
 
@@ -49,22 +49,29 @@ class AddEventAgent(EventAgent):
             )
             return result
         except Exception as e:
-            self.logger.error("End with error: %s", e)
+            self.logger.error("%s", e)
 
     def run(self, action_node: ScAddr) -> ScResult:
         self.logger.info("Started")
-        message_addr, author_node = get_action_arguments(action_node, 2)
-        access_token = self.get_authenticated_token(author_node)
-        if not access_token:
-            self.logger.error("Do not get access token")
+        message_addr, self.author_node = get_action_arguments(
+            action_node,
+            2,
+        )
+        author = self.get_author()
+        if author is None:
+            self.logger.error("Did not get author")
+            return ScResult.ERROR
+        if not message_addr:
+            self.logger.error("Did not have message address")
             return ScResult.ERROR
 
         event = self.get_event(message_addr)
 
         if event is None:
+            self.logger.error("Did not get event")
             return ScResult.ERROR
 
-        response = self.add_event_in_calendar(access_token, event)
+        response = self.add_event_in_calendar(author.access_token, event)
 
         if not response:
             self.logger.info("Event wasn't generated in Google Calendar")
@@ -101,13 +108,16 @@ class AddEventAgent(EventAgent):
         iso_start_time: str = get_link_content_data(start_time_link)
 
         event = Event(
-            summary=summary, start=CalendarDateTime(dateTime=iso_start_time),
+            summary=summary,
+            start=CalendarDateTime(dateTime=iso_start_time),
         )
 
         if end_time_link:
             iso_end_time: str = get_link_content_data(end_time_link)
 
-            if datetime.fromisoformat(iso_start_time) > datetime.fromisoformat(
+            if datetime.fromisoformat(
+                iso_start_time,
+            ) > datetime.fromisoformat(
                 iso_end_time,
             ):
                 self.logger.info("Invalid end date detected")
@@ -115,7 +125,11 @@ class AddEventAgent(EventAgent):
             event.end = CalendarDateTime(dateTime=iso_end_time)
         return event
 
-    def add_event_in_calendar(self, access_token: str, event: Event) -> bool:
+    def add_event_in_calendar(
+        self,
+        access_token: str,
+        event: Event,
+    ) -> bool:
         headers = {
             "Authorization": f"Bearer {access_token}",
             "Accept": "application/json",

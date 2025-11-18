@@ -3,7 +3,7 @@ import logging
 from sc_client.client import generate_by_template, search_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScTemplate
-from sc_kpm import ScAgentClassic, ScKeynodes, ScResult
+from sc_kpm import ScKeynodes, ScResult
 from sc_kpm.utils import (
     generate_link,
     get_link_content_data,
@@ -13,7 +13,8 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.auth.models import Contact
+from modules.google.auth.models import User
+from modules.google.integration_agent import IntegrationAgent
 
 
 logging.basicConfig(
@@ -23,17 +24,9 @@ logging.basicConfig(
 )
 
 
-class CreateContactAgent(ScAgentClassic):
+class CreateContactAgent(IntegrationAgent):
     def __init__(self):
         super().__init__("action_create_contact")
-        self.nrel_name: ScAddr = ScKeynodes.resolve(
-            "nrel_name",
-            sc_type.CONST_NODE_NON_ROLE,
-        )
-        self.nrel_email: ScAddr = ScKeynodes.resolve(
-            "nrel_email",
-            sc_type.CONST_NODE_NON_ROLE,
-        )
         self.nrel_contacts = ScKeynodes.resolve(
             "nrel_contacts",
             sc_type.CONST_NODE_NON_ROLE,
@@ -60,22 +53,26 @@ class CreateContactAgent(ScAgentClassic):
         try:
             args = get_action_arguments(action_node, 3)
 
-            author_node = args[0]
+            self.author_node = args[0]
             name_link = args[1]
             email_link = args[2]
 
-            if not (author_node and name_link and email_link):
-                self.logger.error("Miss required action params")
+            if not (self.author_node and name_link and email_link):
+                self.logger.error(
+                    "Miss required action params: "
+                    f"{self.author_node=}, {name_link=}, {email_link=}",
+                    )
                 return ScResult.ERROR
 
             name = get_link_content_data(name_link)
             email = get_link_content_data(email_link)
 
-            contact = Contact(name=name, email=email)
+            contact = User(name=name, email=email)
             self.logger.info("%s", contact)
 
-            contact_node = self.save_contact(contact, author_node)
+            contact_node = self.save_contact(contact)
             if contact_node is not None:
+                self.logger.info("Save contact")
                 return ScResult.OK
 
         except Exception as e:
@@ -84,10 +81,10 @@ class CreateContactAgent(ScAgentClassic):
 
         return ScResult.OK
 
-    def save_contact(self, contact: Contact, author_node: ScAddr):
+    def save_contact(self, contact: User):
         template = ScTemplate()
         contact_alias = "_contact"
-        tuple_node = self.get_contact_tuple_node(author_node)
+        tuple_node = self.get_contact_tuple_node()
 
         # generate new contact node
         template.triple(
@@ -116,12 +113,11 @@ class CreateContactAgent(ScAgentClassic):
 
     def get_contact_tuple_node(
         self,
-        author_node: ScAddr,
     ):
         template = ScTemplate()
         alias = "_contact_tuple"
         template.quintuple(
-            author_node,
+            self.author_node,
             sc_type.VAR_COMMON_ARC,
             sc_type.VAR_NODE_TUPLE >> alias,
             sc_type.VAR_PERM_POS_ARC,
