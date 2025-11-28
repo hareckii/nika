@@ -17,3 +17,5 @@ ruff==0.14.1
 uritemplate==4.2.0
 urllib3==2.5.0
 websocket-client==1.8.0
+pydantic
+email-validator
