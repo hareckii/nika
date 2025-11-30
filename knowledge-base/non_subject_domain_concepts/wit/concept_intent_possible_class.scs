@@ -41,4 +41,5 @@ concept_intent_possible_class
 -> concept_delete_calendar_event_message;
 -> concept_add_calendar_event_message;
 -> concept_send_mail_message;
+-> concept_app_launch_message;
 -> concept_create_contact_message;;

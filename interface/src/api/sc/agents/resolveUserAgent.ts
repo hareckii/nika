@@ -5,7 +5,7 @@ import { getCookie } from '@hooks/useGoogleAuth';
 const conceptUser = 'concept_user';
 const conceptDialog = 'concept_dialogue';
 const rrelDialogParticipant = 'rrel_dialog_participant';
-const nrelGoogleSession = 'nrel_google_session';
+const nrelGoogleSession = 'nrel_auth_session';
 
 const baseKeynodes = [
     { id: conceptUser, type: ScType.ConstNodeClass },
@@ -15,7 +15,7 @@ const baseKeynodes = [
 ];
 
 const getUser = async () => {
-    const session = getCookie('google_session')
+    const session = getCookie('auth_session')
     if(!session) return null;
     
     const res = await client.searchLinksByContents([session])

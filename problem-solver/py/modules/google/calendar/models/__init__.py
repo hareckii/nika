@@ -4,4 +4,3 @@ from .event import (
     EventBase,
     UpdateEvent,
 )
-from .refresh_response import RefreshResponse

@@ -1,4 +1,4 @@
-import { call_create_google_user_agent } from '@api/sc/agents/googleAuthAgent';
+import { call_create_author_agent } from '@api/sc/agents/googleAuthAgent';
 import { useState, useCallback, useEffect } from 'react';
 
 // generate random session
@@ -32,10 +32,10 @@ export const useGoogleAuth = () => {
 
   useEffect(() => {
     // set session if exists
-    const existingSession = getCookie('google_session');
+    const existingSession = getCookie('auth_session');
     if (existingSession) {
       setSessionId(existingSession);
-      console.log('Get existing google session:', existingSession);
+      console.log('Get existing auth session:', existingSession);
     }
   }, []);
 
@@ -43,13 +43,13 @@ export const useGoogleAuth = () => {
     try {
       const newSessionId = generateSessionId();
       // create new session
-      console.log('Generate google session:', newSessionId);
-      setCookie('google_session', newSessionId, 7);
+      console.log('Generate auth session:', newSessionId);
+      setCookie('auth_session', newSessionId, 7);
       setSessionId(newSessionId);
-      await call_create_google_user_agent(code, newSessionId);
+      await call_create_author_agent(code, newSessionId);
 
     } catch (error) {
-      console.error('Get error with google auth:', error);
+      console.error('Get error with auth:', error);
     }
   };
 

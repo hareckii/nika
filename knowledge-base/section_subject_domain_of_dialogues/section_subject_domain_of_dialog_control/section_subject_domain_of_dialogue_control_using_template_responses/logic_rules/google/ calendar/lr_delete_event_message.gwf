@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GWF version="2.0">
     <staticSector>
-        <node type="node/const/perm/relation" idtf="nrel_google_session" shapeColor="0" id="980598192" parent="980461440" left="0" top="0" right="116.25" bottom="23" textColor="164" text_angle="0" text_font="Times New Roman" font_size="10" x="-82.7873" y="634" haveBus="false" idtf_pos="0">
+        <node type="node/const/perm/relation" idtf="nrel_auth_session" shapeColor="0" id="980598192" parent="980461440" left="0" top="0" right="116.25" bottom="23" textColor="164" text_angle="0" text_font="Times New Roman" font_size="10" x="-82.7873" y="634" haveBus="false" idtf_pos="0">
             <content type="0" mime_type="" content_visibility="false" file_name=""/>
         </node>
         <node type="node/const/perm/group" idtf="lang_en" shapeColor="0" id="982384496" parent="980461440" left="0" top="0" right="51.3125" bottom="23" textColor="164" text_angle="0" text_font="Times New Roman" font_size="10" x="81.2127" y="458" haveBus="false" idtf_pos="0">

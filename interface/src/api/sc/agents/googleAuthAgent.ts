@@ -8,8 +8,8 @@ import { generateLinkText } from './newMessageAgent';
 
 const keynode_images = [
     { id: 'users', type: ScType.ConstNodeClass },
-    { id: 'nrel_google_session', type: ScType.NodeNonRole },
-    { id: 'action_create_google_user', type: ScType.ConstNodeClass },
+    { id: 'nrel_auth_session', type: ScType.NodeNonRole },
+    { id: 'action_create_author', type: ScType.ConstNodeClass },
     { id: "action", type: ScType.ConstNodeClass },
     { id: "action_initiated", type: ScType.ConstNodeClass },
     { id: "rrel_1", type: ScType.ConstNodeRole },
@@ -17,7 +17,7 @@ const keynode_images = [
 ];
 
 
-export const call_create_google_user_agent = async (
+export const call_create_author_agent = async (
     code: string, 
     session: string,
 ) => {
@@ -43,7 +43,7 @@ export const call_create_google_user_agent = async (
                 [ScType.VarNode, action_node_alias]
             );
             template.triple(
-                keynodes["action_create_google_user"], 
+                keynodes["action_create_author"], 
                 ScType.VarPermPosArc, 
                 action_node_alias
             );
@@ -97,13 +97,13 @@ const find_user_by_session = async (
     if (session_link){
         const template = new ScTemplate();
         const component_user = '_user'
-        const component_session = '_google_session'
+        const component_session = '_auth_session'
         template.quintuple(
             [ScType.VarNode, component_user],
             ScType.VarCommonArc,
             [session_link, component_session],
             ScType.VarPermPosArc,
-            keynodes['nrel_google_session'],
+            keynodes['nrel_auth_session'],
         );
         template.triple(
             keynodes['users'],
@@ -117,7 +117,7 @@ const find_user_by_session = async (
             const user_node = search_result[0].get(component_user)
             const session_content = client.getLinkContents([user_node])[0].data
             console.log(
-                'User with google_session: ', 
+                'User with auth_session: ', 
                 session_content,
                 'already exists!'
             )
