@@ -8,6 +8,7 @@ from modules import (
     GoogleAuthModule,
     GoogleCalendarModule,
     WeatherModule,
+    GoogleDiskModule
 )
 
 
@@ -29,6 +30,7 @@ def main(args: dict):
             WeatherModule(),
             GoogleAuthModule(),
             GoogleCalendarModule(),
+            GoogleDiskModule(),
             ]
         server.add_modules(*modules)
         with server.register_modules():

@@ -32,7 +32,9 @@ import { ReactComponent as ArrowIcon } from '@assets/icon/arrowBackToLastMessage
 import { Spinner } from '@components/Spinners/LoadSpinner';
 import { WaitingSpinner } from '@components/Spinners/WaitingSpinner';
 import { refSetter, throttle } from '@utils';
+import { ScAddr, ScEventType, ScTemplate, ScType, ScConstruction, ScLinkContent,ScLinkContentType } from "ts-sc-client";
 import { useLanguage } from '@hooks/useLanguage';
+import { client } from "@api";
 
 interface IProps {
     onSend: (message: string) => void;
@@ -175,6 +177,60 @@ export const Chat = forwardRef<HTMLDivElement, PropsWithChildren<IProps>>(
             const empty = !messageInput.trim();
             if (empty) setMessageInput('');
         }, [messageInput]);
+
+        async function periodic_indexing() {
+            const yourFunction = async () => {
+                console.log('Функция запущена');
+                const myActionNode = '_action';
+                const action = 'action';
+                const actionIndex= 'action_index_documents';
+                const actionInit = 'action_initiated';
+                const keynodes = [                  
+                  { id: action, type: ScType.NodeConstClass },
+                  { id: actionIndex, type: ScType.NodeConstClass },
+                  { id: actionInit, type: ScType.NodeConstClass},                  
+                ];
+                const keys = await client.resolveKeynodes(keynodes);
+
+                const template = new ScTemplate();              
+                template.triple( 
+                    keys[action],
+                    ScType.EdgeAccessVarPosPerm,
+                    [ScType.VarNode, myActionNode],
+                ); 
+                template.triple( 
+                    keys[actionIndex],
+                    ScType.EdgeAccessVarPosPerm,
+                    myActionNode,
+                );
+                console.log(actionIndex);
+                const indexingAction = await client.generateByTemplate(template);
+                if (indexingAction) {console.log('Шаблон построен');}
+
+                template.triple( 
+                    keys[actionInit],
+                    ScType.EdgeAccessVarPosPerm,
+                    myActionNode,
+                );
+                const indexingStart = await client.generateByTemplate(template);
+                if (indexingStart) {console.log('Шаблон построен');}
+                console.log('Функция отработала');
+            };
+            
+            // Запуск функции сразу при старте
+            yourFunction();
+        
+            // Установка интервала для повторного запуска каждые 60 секунд
+            const intervalId = setInterval(yourFunction, 120000);
+        
+            // Очистка интервала при размонтировании компонента
+            return () => clearInterval(intervalId);
+        }
+        
+        useEffect(() => {
+            periodic_indexing();
+        }, []);
+
 
         return (
             <Wrapper className={className}>

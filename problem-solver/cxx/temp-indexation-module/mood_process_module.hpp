@@ -4,10 +4,10 @@
 
 #include "service/periodic_service.hpp"
 
-class MoodProcessModule : public ScModule
+class IndexationModule : public ScModule
 {
 public:
-  MoodProcessModule();
+  IndexationModule();
 
   void Initialize(ScMemoryContext * context) override;
 
