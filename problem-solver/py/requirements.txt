@@ -37,3 +37,4 @@ python-docx
 scikit-learn
 pymorphy3 
 pymorphy3-dicts-ru
+cryptography

@@ -33,13 +33,10 @@ def main(args: dict):
             WeatherModule(),
             GoogleAuthModule(),
             GoogleCalendarModule(),
-<<<<<<< HEAD
             GoogleDiskModule(),
-=======
             GmailModule(),
             LaunchModule(),
             ContactModule(),
->>>>>>> feat/google_integrations
             ]
         server.add_modules(*modules)
         with server.register_modules():

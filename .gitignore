@@ -26,7 +26,3 @@ __pycache__
 *.log
 *.env
 .DS_Store
-
-interface/*.env
-
-problem-solver/py/modules/google/disk/credentials/client_secrets.json
