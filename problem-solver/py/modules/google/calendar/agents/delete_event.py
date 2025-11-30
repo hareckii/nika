@@ -16,7 +16,9 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.calendar.agents.event_agent import CalendarAgent
+from modules.google.calendar.agents.calendar_agent import (
+    GoogleCalendarAgent,
+)
 from modules.google.calendar.models import EventBase
 
 
@@ -27,7 +29,7 @@ logging.basicConfig(
 )
 
 
-class DeleteEventAgent(CalendarAgent):
+class DeleteEventAgent(GoogleCalendarAgent):
     def __init__(self):
         super().__init__("action_delete_calendar_event")
 
@@ -51,14 +53,13 @@ class DeleteEventAgent(CalendarAgent):
             return ScResult.ERROR
 
     def run(self, action_node: ScAddr) -> ScResult:
-        self.logger.info("Started")
         message_addr, self.author_node = get_action_arguments(
             action_node,
             2,
         )
-        author = self.get_author()
-        if author is None:
-            self.logger.error("Did not get author")
+        token = self.get_token()
+        if token is None:
+            self.logger.error("Did not get token")
             return ScResult.ERROR
         if not message_addr:
             self.logger.error("Did not have message address")
@@ -70,7 +71,7 @@ class DeleteEventAgent(CalendarAgent):
             self.logger.error("Did not get event")
             return ScResult.ERROR
 
-        event_with_id = self.search_event(author.access_token, event)
+        event_with_id = self.search_event(token, event)
         if not event_with_id:
             self.logger.info("Did not find event in Google Calendar")
             return ScResult.UNKNOWN
@@ -78,7 +79,7 @@ class DeleteEventAgent(CalendarAgent):
         self.logger.info(f"Find event: {event_with_id.summary}")
 
         deletion_result = self.delete_event(
-            author.access_token,
+            token,
             event_with_id,
         )
         if deletion_result is not True:

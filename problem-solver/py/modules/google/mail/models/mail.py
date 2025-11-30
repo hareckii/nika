@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
-from modules.google.auth.models import Author, User
+from auth.models import User
 
 
 class Mail(BaseModel):
-    sender: Author
+    sender: User
     receiver: User
     body: str
     subject: str | None = None

@@ -16,7 +16,9 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.calendar.agents.event_agent import CalendarAgent
+from modules.google.calendar.agents.calendar_agent import (
+    GoogleCalendarAgent,
+)
 from modules.google.calendar.models import CalendarDateTime, Event
 
 
@@ -27,7 +29,7 @@ logging.basicConfig(
 )
 
 
-class AddEventAgent(CalendarAgent):
+class AddEventAgent(GoogleCalendarAgent):
     def __init__(self):
         super().__init__("action_add_calendar_event")
 
@@ -52,14 +54,13 @@ class AddEventAgent(CalendarAgent):
             self.logger.error("%s", e)
 
     def run(self, action_node: ScAddr) -> ScResult:
-        self.logger.info("Started")
         message_addr, self.author_node = get_action_arguments(
             action_node,
             2,
         )
-        author = self.get_author()
-        if author is None:
-            self.logger.error("Did not get author")
+        token = self.get_token()
+        if token is None:
+            self.logger.error("Did not get token")
             return ScResult.ERROR
         if not message_addr:
             self.logger.error("Did not have message address")
@@ -71,7 +72,7 @@ class AddEventAgent(CalendarAgent):
             self.logger.error("Did not get event")
             return ScResult.ERROR
 
-        response = self.add_event_in_calendar(author.access_token, event)
+        response = self.add_event_in_calendar(token, event)
 
         if not response:
             self.logger.info("Event wasn't generated in Google Calendar")

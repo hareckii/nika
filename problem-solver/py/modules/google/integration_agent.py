@@ -1,4 +1,5 @@
-from sc_client.constants import sc_type
+from abc import ABC, abstractmethod
+
 from sc_client.models import ScAddr
 from sc_kpm import ScAgentClassic, ScKeynodes
 from sc_kpm.identifiers import CommonIdentifiers
@@ -12,27 +13,25 @@ from sc_kpm.utils.action_utils import (
     get_action_result,
 )
 
-from modules.google.auth.models import Author
+from auth.models import User
 
 
-class IntegrationAgent(ScAgentClassic):
+class IntegrationAgent(ScAgentClassic, ABC):
     def __init__(self, action: str):
         super().__init__(action)
-        self.nrel_name: ScAddr = ScKeynodes.resolve(
-            "nrel_name",
-            sc_type.CONST_NODE_NON_ROLE,
-        )
-        self.nrel_email: ScAddr = ScKeynodes.resolve(
-            "nrel_email",
-            sc_type.CONST_NODE_NON_ROLE,
-        )
+        self.nrel_name: ScAddr = ScKeynodes.get("nrel_name")
+        self.nrel_email: ScAddr = ScKeynodes.get("nrel_email")
         self.author_node: ScAddr | None = None
 
-    def _get_authenticated_token(self) -> str | None:
-        action_class_name = "action_google_auth"
+    @property
+    @abstractmethod
+    def check_token_agent_action(self) -> str:
+        pass
+
+    def get_token(self) -> str | None:
         action, is_successful = execute_agent(
             arguments={self.author_node: False},
-            concepts=[CommonIdentifiers.ACTION, action_class_name],
+            concepts=[CommonIdentifiers.ACTION, self.check_token_agent_action],
         )
         if is_successful:
             result_struct = get_action_result(action)
@@ -43,8 +42,7 @@ class IntegrationAgent(ScAgentClassic):
             return access_token
         return None
 
-    def get_author(self) -> Author:
-        access_token = self._get_authenticated_token()
+    def get_author(self) -> User:
         name = search_element_by_non_role_relation(
             self.author_node,
             self.nrel_name,
@@ -54,14 +52,13 @@ class IntegrationAgent(ScAgentClassic):
             self.nrel_email,
         )
         try:
-            return Author(
+            return User(
                 name=get_link_content_data(name),
                 email=get_link_content_data(email),
-                access_token=access_token,
             )
         except ValueError:
             self.logger.info(
                 "Got error with author params: "
-                f"{access_token=}, {name=}, {email=}",
+                f"{name=}, {email=}",
             )
             return None
