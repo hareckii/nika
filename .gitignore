@@ -28,3 +28,5 @@ __pycache__
 .DS_Store
 
 interface/*.env
+
+problem-solver/py/modules/google/disk/credentials/client_secrets.json
