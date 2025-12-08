@@ -1,30 +1,30 @@
 concept_intent_possible_class
 <- sc_node_class;
 => nrel_main_idtf:
-	[возможный класс цели Wit.ai]
+	[возможный класс цели Wit.ai или Rasa]
 	(* <- lang_ru;; *);
-	[Wit.ai intent possible class]
+	[Wit.ai or Rasa intent possible class]
 	(* <- lang_en;; *);
 <- rrel_key_sc_element:
 	...
 	(*
 	=> nrel_main_idtf:
-		[Опр. (возможный класс цели Wit.ai)]
+		[Опр. (возможный класс цели Wit.ai или Rasa)]
 		(* <- lang_ru;; *);
-		[Def. (Wit.ai intent possible class)]
+		[Def. (Wit.ai or Rasa intent possible class)]
 		(* <- lang_en;; *);;
 	<- definition;;
 	<= nrel_sc_text_translation:
 		...
 		(*
 		-> rrel_example:
-			[Возможный класс цели Wit.ai - класс, элементы которого могут быть выделены посредством Wit.ai как цели.]
+			[Возможный класс цели Wit.ai или Rasa - класс, элементы которого могут быть выделены посредством Wit.ai или Rasa как цели.]
 			(* <- lang_ru;; *);;
 		*);
 		...
 		(*
 		-> rrel_example: 
-			[Wit.ai intent possible class is a class whose elements can be identified by Wit.ai as intents.]
+			[Wit.ai or Rasa intent possible class is a class whose elements can be identified by Wit.ai or Rasa as intents.]
 			(* <- lang_en;; *);;
 		*);;
 	*);
@@ -36,4 +36,6 @@ concept_intent_possible_class
 -> concept_message_about_weather;
 -> concept_message_about_find_word_by_first_letter;
 -> concept_message_about_lab_work_deadline;
--> concept_message_about_skill;;
+-> concept_message_about_skill;
+-> concept_message_about_yandex_disc_info;
+-> concept_message_about_yandex_disc_resources;;

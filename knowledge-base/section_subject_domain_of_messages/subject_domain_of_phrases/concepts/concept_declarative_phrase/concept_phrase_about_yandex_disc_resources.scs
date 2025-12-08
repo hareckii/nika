@@ -1,0 +1,26 @@
+concept_phrase_about_yandex_disc_resources
+<- sc_node_class;
+=> nrel_main_idtf:
+	[фраза о ресурсах яндекс диска пользователя]
+	(* <- lang_ru;; *);
+	[phrase about user's yandex disc resources]
+	(* <- lang_en;; *);
+<- rrel_key_sc_element:
+	...
+	(*
+	=> nrel_main_idtf:
+		[Опр. (фраза про информацию о ресурсах яндекс диска пользователя)]
+		(* <- lang_ru;; *);;
+	<- definition;;
+	<= nrel_sc_text_translation:
+		...
+		(*
+		-> rrel_example:
+			[Фраза про информацию о ресурсах яндекс диска пользователя - фраза, содержащая некоторую информацию про файлы, которые пользователь имеет на своем яндекс диске.]
+			(* <- lang_ru;; *);;
+		*);;
+	<= nrel_using_constants:
+		{
+			concept_phrase
+		};;
+	*);;

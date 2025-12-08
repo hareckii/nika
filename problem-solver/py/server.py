@@ -1,6 +1,8 @@
 import argparse
 from sc_kpm import ScServer
 from modules.messageProcessingModule.MessageProcessingModule import MessageProcessingModule
+from modules.yandex.yandex_auth.auth_module import YandexAuthModule
+from modules.yandex.yandex_disc.yandex_disc_module import YandexDiscModule
 
 from pathlib import Path
 
@@ -19,7 +21,9 @@ def main(args: dict):
 
     with server.connect():
         modules = [
-            MessageProcessingModule()
+            MessageProcessingModule(),
+            YandexAuthModule(),
+            YandexDiscModule()
         ]
         server.add_modules(*modules)
         with server.register_modules():

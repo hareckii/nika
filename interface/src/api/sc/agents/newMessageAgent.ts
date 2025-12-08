@@ -91,10 +91,20 @@ const findNewMessageNode = async (circuitAddr: ScAddr) => {
     return null;
 };
 
-export const newMessageAgent = async (chatNode: ScAddr, author: ScAddr | string, linkAddr: ScAddr) => {
+export const newMessageAgent = async (
+    chatNode: ScAddr, 
+    author: ScAddr | string,
+    linkAddr: ScAddr
+) => {
     const keynodes = await client.resolveKeynodes(baseKeynodes);
 
-    const [template, userActionNodeAlias] = await describeAgent(chatNode, author, keynodes, linkAddr);
+    console.log(author);
+    const [template, userActionNodeAlias] = await describeAgent(
+        chatNode,
+        author,
+        keynodes, 
+        linkAddr
+        );
 
     const circuitAddr = await makeAgent(template, userActionNodeAlias);
 

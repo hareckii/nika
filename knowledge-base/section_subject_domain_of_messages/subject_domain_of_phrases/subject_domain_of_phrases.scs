@@ -13,4 +13,6 @@ subject_domain_of_phrases
 	concept_misunderstanding_phrase;
 	concept_phrase_about_study_system;
 	concept_phrase_about_lab_work_condition;
-	concept_phrase_about_lab_work_deadline;;
+	concept_phrase_about_lab_work_deadline;
+	concept_phrase_about_yandex_disc_info;
+	concept_phrase_about_yandex_disc_resources;;

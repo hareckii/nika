@@ -1,0 +1,37 @@
+concept_message_about_yandex_disc_resources
+<- sc_node_class;
+<- concept_tokens_category;
+=> nrel_main_idtf:
+	[сообщение о ресурсах яндекс диска пользователя]
+	(* <- lang_ru;; *);
+	[message about user's yandex disc resources]
+	(* <- lang_en;; *);
+=> nrel_rasa_idtf:
+    [message_about_yandex_disc_resources];
+<- rrel_key_sc_element:
+	...
+	(*
+        => nrel_main_idtf:
+        [Опр. (сообщение о ресурсах яндекс диска пользователя)]
+        (* <- lang_ru;; *);
+        [Def. (message about user's yandex disc resources)]
+        (* <- lang_en;; *);;
+        <- definition;;
+        <= nrel_sc_text_translation:
+            ...
+            (*
+                -> rrel_example:
+                    [Сообщение о ресурсах яндекс диска пользователя - атомарное сообщение, целью которого является получение пользователем информации о файлах, хранимых на его яндекс диске.]
+                    (* <- lang_ru;; *);;
+            *);
+            ...
+            (*
+                -> rrel_example:
+                    [Message about user's yandex disc is an atomic message, the purpose of which is to get information about user's yandex disc.]
+                    (* <- lang_en;; *);;
+            *);;
+        <= nrel_using_constants:
+            {
+                concept_atomic_message
+            };;
+	*);;

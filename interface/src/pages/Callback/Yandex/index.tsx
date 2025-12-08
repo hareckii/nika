@@ -1,0 +1,1 @@
+export { YandexCallback as default } from './yandex';
