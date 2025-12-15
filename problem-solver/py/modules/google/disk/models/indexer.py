@@ -33,13 +33,11 @@ from sc_kpm.utils.action_utils import (
 
 class AIComponents:
     def __init__(self, spacy_model_name: str):
-        print("Загрузка NLP инструментов...")
         self._download_nltk_data()
         self.stemmer = SnowballStemmer("russian")
         self.stop_words = set(stopwords.words('russian'))
-        self.stop_words.update(['или', 'не'])
+        self.stop_words.update(['или', 'не','и'])
         self.nlp_ner = spacy.load(spacy_model_name)
-        print("Инструменты загружены.")
 
     def _download_nltk_data(self):
         try:
@@ -53,9 +51,7 @@ class AIComponents:
 
 
 from pymorphy3 import MorphAnalyzer
-import math
 import re
-from collections import Counter
 
 def clean_text(text):
     # Удалить все неалфавитно-цифровые символы, кроме пробелов
@@ -96,9 +92,6 @@ class Indexer:
         return ' '.join(lemmas)
 
     def index_documents(self):
-        if not self.documents:
-            print("Нет документов для индексации.")
-            return
 
         corpus = [self.preprocess_document(doc) for doc in self.documents]
         self.corpus = corpus
@@ -107,7 +100,6 @@ class Indexer:
         # Сохраняем векторы документов с нормализацией
         self.doc_vectors = {doc['title']: tfidf_matrix[idx].toarray()[0].tolist() for idx, doc in enumerate(self.documents)}
 
-        print("Индексация завершена.")
 
     def save_info_in_KB(self):
         concept_drive_disk_info = ScKeynodes.resolve("concept_drive_disk_info", sc_type.CONST_NODE_CLASS)
@@ -143,39 +135,8 @@ class Indexer:
             temp_arc = new_arc
         
         # создаем объект векторов документов
-        '''vectors_tuple = generate_node(sc_type.CONST_NODE_TUPLE)
-        for key, value in self.doc_vectors.items():
-
-            import time
-            start_time = time.perf_counter()
-
-            
-            vector = generate_node(sc_type.CONST_NODE)
-            generate_connector(sc_type.CONST_PERM_POS_ARC, vectors_tuple, vector)
-            title_link = generate_link(key, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK,)
-            generate_non_role_relation(vector,title_link,nrel_idtf)
-
-            first_vector_val_link = generate_link(value[0], ScLinkContentType.INT, link_type=sc_type.CONST_NODE_LINK,)
-            first_rrel = generate_role_relation(vector, first_vector_val_link, ScKeynodes.rrel_index(1))
-
-            temp_arc = first_rrel
-            for vector_val_one in value[1:]:
-                vector_val_link = generate_link(vector_val_one, ScLinkContentType.INT, link_type=sc_type.CONST_NODE_LINK,)
-                new_arc = generate_connector(sc_type.CONST_PERM_POS_ARC, vector, vector_val_link)
-                generate_non_role_relation(temp_arc,new_arc,nrel_next)
-                temp_arc = new_arc      
-            
-            
-            end_time = time.perf_counter()
-            elapsed_time = end_time - start_time
-            print(f"Время выполнения: {elapsed_time:.4f} секунд")'''
-
         vectors_tuple = generate_node(sc_type.CONST_NODE_TUPLE)
         for key, value in self.doc_vectors.items():
-
-            import time
-            start_time = time.perf_counter()
-
             vector = generate_node(sc_type.CONST_NODE)
             generate_connector(sc_type.CONST_PERM_POS_ARC, vectors_tuple, vector)
             title_link = generate_link(key, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK,)
@@ -184,11 +145,6 @@ class Indexer:
             vectorized_doc_string = ' '.join(map(str, value))
             vectorized_doc_string_link = generate_link(vectorized_doc_string, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK,)
             generate_non_role_relation(vector, vectorized_doc_string_link, nrel_vectorized_doc)
-
-
-            end_time = time.perf_counter()
-            elapsed_time = end_time - start_time
-            print(f"Время выполнения: {elapsed_time:.4f} секунд")
 
 
         # генерация конечного шаблона
@@ -214,13 +170,7 @@ class Indexer:
             sc_type.VAR_PERM_POS_ARC,
             nrel_doc_vectors,
         )
-        search_results = generate_by_template(template)
-        
-        # self.doc_vectors
-        # self.corpus
-        
-
-        
+        search_results = generate_by_template(template)     
 
 
 import os
@@ -270,7 +220,6 @@ class IndexerWithFiles(Indexer):
         done = False
         while not done:
             status, done = downloader.next_chunk()
-            print(f"Скачано {int(status.progress() * 100)}% файла {file_name}")
         fh.close()
 
     def index_files(self, service, files_list):
@@ -292,7 +241,6 @@ class IndexerWithFiles(Indexer):
                 elif ext == '.pdf':
                     content = read_pdf(temp_file_path)
                 else:
-                    print(f"Пропуск файла с неподдерживаемым форматом: {file_info['name']}")
                     os.remove(temp_file_path)
                     continue
                 

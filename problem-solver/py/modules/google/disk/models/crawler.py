@@ -1,8 +1,6 @@
 def crawl_drive(service):
     files = []
     page_token = None
-
-    # Теперь ищем нужные файлы (PDF, DOCX, TXT)
     query_files = "(mimeType='application/pdf' or mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document' or mimeType='text/plain') and 'me' in owners and trashed = false"
     page_token = None
     while True:

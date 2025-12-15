@@ -28,11 +28,14 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.disk.models.auth import authorize
 from modules.google.disk.models.crawler import crawl_drive
 from modules.google.disk.models.indexer import AIComponents, IndexerWithFiles
+from modules.google.integration_agent import IntegrationAgent
 
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
+from secrets_env import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,9 +44,13 @@ logging.basicConfig(
 )
 
 
-class IndexingAgent(ScAgentClassic):
+class IndexingAgent(IntegrationAgent):
     def __init__(self):
         super().__init__("action_index_documents")
+
+    @property
+    def check_token_agent_action(self) -> str:
+        return 'action_check_google_token'
 
     def on_event(
         self,
@@ -64,14 +71,12 @@ class IndexingAgent(ScAgentClassic):
         self.logger.info("IndexingAgent started")
 
         try:
-            # message_addr = get_action_arguments(action_node, 1)[0]
-            service = authorize()
+            service = self.authorize()            
             files = crawl_drive(service)
 
             self.logger.info(f"Всего файлов: {len(files)}")
             for f in files:
                 self.logger.info(f"{f['name']}")
-            files = files[:4]
 
             if len(files) == 0:
                 return ScResult.OK
@@ -79,7 +84,6 @@ class IndexingAgent(ScAgentClassic):
             ai = AIComponents('ru_core_news_sm')
             indexer = IndexerWithFiles(ai)
             indexer.index_files(service, files)
-
             indexer.save_info_in_KB()
 
         except Exception as e:
@@ -87,3 +91,98 @@ class IndexingAgent(ScAgentClassic):
             return ScResult.ERROR
 
         return ScResult.OK
+    
+    def authorize(self):
+        nrel_auth_session = ScKeynodes.resolve("nrel_auth_session", sc_type.CONST_NODE_CLASS)
+        concept_user = ScKeynodes.resolve("concept_user", sc_type.CONST_NODE_CLASS)
+
+        author_alias = "_author"
+        template = ScTemplate()
+        template.quintuple(
+            sc_type.VAR_NODE >> author_alias,
+            sc_type.VAR_COMMON_ARC,
+            sc_type.VAR_NODE_LINK,
+            sc_type.VAR_PERM_POS_ARC,
+            nrel_auth_session
+        )
+        template.triple(
+            concept_user,
+            sc_type.VAR_PERM_POS_ARC,
+            author_alias,
+        )
+
+        result = search_by_template(template)
+        self.author_node: ScAddr
+        if result:
+            self.author_node = result[0].get(author_alias)
+        else:
+            return ScResult.OK
+
+        print(type(self.author_node))
+
+        tokens_dict = self._get_tokens(self.author_node)
+        if tokens_dict is None:
+            self.logger.error("Did not find tokens!!!")
+
+        access_token_link = tokens_dict.get('access_token')
+        refresh_token_link = tokens_dict.get('refresh_token')
+
+        access_token = get_link_content_data(access_token_link)
+        refresh_token = get_link_content_data(refresh_token_link)
+        
+        try:
+            # Создаём объект Credentials из токена
+            creds = Credentials(
+                token=access_token,
+                refresh_token=refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=GOOGLE_CLIENT_ID,
+                client_secret=GOOGLE_CLIENT_SECRET
+            )
+            if creds is not None:
+                if creds.valid:
+                    self.logger.info("Credentials object is GOOD")
+            else:
+                self.logger.info("Credentials object is None")
+            # Создаём сервис Google Drive
+            service = build('drive', 'v3', credentials=creds)
+            return service
+        except Exception as e:
+            self.logger.info(f"Error creating service: {e}")
+            return ScResult.ERROR
+        
+    def _get_tokens(self, author_node: ScAddr) -> dict[str, ScAddr]:
+        nrel_refresh_token = ScKeynodes.resolve(
+            "nrel_refresh_token",
+            sc_type.CONST_NODE_NON_ROLE,
+            )
+        nrel_access_token = ScKeynodes.resolve(
+            "nrel_access_token",
+            sc_type.CONST_NODE_NON_ROLE,
+            )
+        template = ScTemplate()
+
+        acs_alias = 'acs'
+        ref_alias = 'ref'
+
+        template.quintuple(
+            author_node,
+            sc_type.VAR_COMMON_ARC,
+            sc_type.VAR_NODE_LINK >> acs_alias,
+            sc_type.VAR_PERM_POS_ARC,
+            nrel_access_token,
+        )
+        template.quintuple(
+            author_node,
+            sc_type.VAR_COMMON_ARC,
+            sc_type.VAR_NODE_LINK >> ref_alias,
+            sc_type.VAR_PERM_POS_ARC,
+            nrel_refresh_token,
+        )
+
+        res = search_by_template(template)
+        if res:
+            return {
+                'access_token': res[0].get(acs_alias),
+                'refresh_token': res[0].get(ref_alias),
+            }
