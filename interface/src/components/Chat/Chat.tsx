@@ -32,7 +32,9 @@ import { ReactComponent as ArrowIcon } from '@assets/icon/arrowBackToLastMessage
 import { Spinner } from '@components/Spinners/LoadSpinner';
 import { WaitingSpinner } from '@components/Spinners/WaitingSpinner';
 import { refSetter, throttle } from '@utils';
+import { ScAddr, ScEventType, ScTemplate, ScType, ScConstruction, ScLinkContent,ScLinkContentType } from "ts-sc-client";
 import { useLanguage } from '@hooks/useLanguage';
+import { client } from "@api";
 
 interface IProps {
     onSend: (message: string) => void;
