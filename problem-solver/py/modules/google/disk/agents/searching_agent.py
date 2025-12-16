@@ -7,6 +7,8 @@ import logging
 
 import requests
 
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 from sc_client.client import search_by_template
 from sc_client.constants import sc_type
 from sc_client.models import ScAddr, ScLinkContentType, ScTemplate
@@ -17,9 +19,9 @@ from sc_kpm.utils import (
     erase_connectors,
     generate_connector,
     generate_link,
+    generate_role_relation,
     get_element_system_identifier,
     get_link_content_data,
-    generate_role_relation,
     search_connector,
     search_element_by_non_role_relation,
 )
@@ -29,15 +31,15 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
-from modules.google.disk.models.search_processor import SearchEngine
-from modules.google.disk.models.crawler import crawl_drive
-from modules.google.disk.models.indexer import AIComponents, IndexerWithFiles
 from auth.base.agents.integration_agent import IntegrationAgent
-
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-
+from modules.google.disk.models.crawler import crawl_drive
+from modules.google.disk.models.indexer import (
+    AIComponents,
+    IndexerWithFiles,
+)
+from modules.google.disk.models.search_processor import SearchEngine
 from secrets_env import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+
 
 logging.basicConfig(
     level=logging.INFO,

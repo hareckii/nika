@@ -31,6 +31,7 @@ from sc_kpm.utils.action_utils import (
     get_action_arguments,
 )
 
+nltk.download('punkt_tab')
 class AIComponents:
     def __init__(self, spacy_model_name: str):
         self._download_nltk_data()
