@@ -27,6 +27,7 @@ export const useYandexAuth = () => {
       `client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&response_type=${responseType}` +
+      `&force_confirm=yes` +
       `&scope=${encodeURIComponent(scopes.join(' '))}`;
 
     window.location.href = authUrl;

@@ -9,7 +9,6 @@ services:
       - ./data:/data
       - ./config.yml:/config.yml
       - ./domain.yml:/domain.yml
-    restart: unless-stopped
 
   rasa-test:
     build:

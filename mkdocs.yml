@@ -24,6 +24,8 @@ nav:
     - Build System: build/build_system.ru.md
     - CMake Flags: build/cmake_flags.md
     - CMake Flags: build/cmake_flags.ru.md
+    - Rasa classifier: build/rasa_classifier.md
+    - Rasa classifier: build/rasa_classifier.ru.md
   - Development:
     - Git-workflow: dev/git-workflow.md
     - Git-workflow: dev/git-workflow.ru.md

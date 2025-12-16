@@ -14,6 +14,7 @@ Table of contents:
     - [Docker](build/docker_build.md) - *build, run, and deploy NIKA using Docker containers*
     - [Build System](build/build_system.md) - *understand the underlying build system components*
     - [CMake Flags](build/cmake_flags.md) - *configure the build process using available CMake options*
+    - [Rasa Classifier](build/rasa_classifier.md) - *build and launch Rasa classifier and configure its NLU module*
 - **Development** - *resources for contributing to the NIKA project*
     - [Git workflow](dev/git-workflow.md) - *follow our git workflow for effective collaboration*
     - [Pull Request](dev/pr.md) - *guidelines for creating and submitting pull requests*
@@ -23,6 +24,7 @@ Table of contents:
     - [Message reply agent](agents/messageReplyAgent.md) - *generates appropriate responses to user messages*
     - [Standard message reply agent](agents/standardMessageReplyAgent.md) - *provides message replies*
     - [Message topic classification agent](agents/messageTopicClassificationAgent.md) - *identifies the topic of user messages using Wit.ai*
+    - [Rasa message topic classification agent](agents/rasaMessageTopicClassificationAgent.md) - *identifies the topic of user messages using Rasa*
     - [Alternative message topic classification agent](agents/alternativeMessageTopicClassificationAgent.md) - *approach to message topic classification using logic rules*
     - [Phrase generation agent](agents/phraseGenerationAgent.md) - *creates natural language phrases*
     - [Change interface color agent](agents/changeInterfaceColorAgent.md) - *dynamically adjusts the user interface color*
