@@ -30,7 +30,7 @@ from sc_kpm.utils.action_utils import (
 
 from modules.google.disk.models.crawler import crawl_drive
 from modules.google.disk.models.indexer import AIComponents, IndexerWithFiles
-from py.auth.base.agents import IntegrationAgent
+from auth.base.agents.integration_agent import IntegrationAgent
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials

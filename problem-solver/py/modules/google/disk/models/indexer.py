@@ -72,8 +72,9 @@ class Indexer:
         self.doc_vectors = {}
         self.corpus = ''
 
-    def add_document(self, doc_id, title, content):
-        self.documents.append({'id': doc_id, 'title': title, 'content': content})
+    def add_document(self, doc_id, title, content, web_link=None):
+        self.documents.append({'id': doc_id, 'title': title, 'content': content, 'web_link': web_link})
+
 
     def preprocess_document(self, doc):
         title = clean_text(doc['title'])
@@ -121,6 +122,7 @@ class Indexer:
         nrel_idtf = ScKeynodes.resolve("nrel_idtf", sc_type.CONST_NODE_ROLE)
         nrel_next = ScKeynodes.resolve("nrel_next", sc_type.CONST_NODE_ROLE)
         nrel_vectorized_doc = ScKeynodes.resolve("nrel_vectorized_doc", sc_type.CONST_NODE_ROLE)
+        nrel_web_link = ScKeynodes.resolve("nrel_web_link", sc_type.CONST_NODE_ROLE)
 
         # создаем объект корпуса текста
         corpus_tuple = generate_node(sc_type.CONST_NODE_TUPLE)
@@ -146,6 +148,10 @@ class Indexer:
             vectorized_doc_string_link = generate_link(vectorized_doc_string, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK,)
             generate_non_role_relation(vector, vectorized_doc_string_link, nrel_vectorized_doc)
 
+            web_link = next((doc['web_link'] for doc in self.documents if doc['title'] == key), None)
+            if web_link:
+                web_link_string = generate_link(web_link, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK,)
+                generate_non_role_relation(vector, web_link_string, nrel_web_link)
 
         # генерация конечного шаблона
         template = ScTemplate()
@@ -247,7 +253,7 @@ class IndexerWithFiles(Indexer):
                 path = get_path_to_root(service, file_info['id'])        
                 title =  f"{'/'.join(path)}"
 
-                self.add_document(idx, title, content)
+                self.add_document(idx, title, content, web_link=file_info.get('webViewLink'))
                 
                 # Удаляем временный файл
                 os.remove(temp_file_path)

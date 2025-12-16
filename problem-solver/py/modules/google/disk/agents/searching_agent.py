@@ -32,7 +32,7 @@ from sc_kpm.utils.action_utils import (
 from modules.google.disk.models.search_processor import SearchEngine
 from modules.google.disk.models.crawler import crawl_drive
 from modules.google.disk.models.indexer import AIComponents, IndexerWithFiles
-from py.auth.base.agents import IntegrationAgent
+from auth.base.agents.integration_agent import IntegrationAgent
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -73,7 +73,6 @@ class SearchDocumentsAgent(IntegrationAgent):
         self.logger.info("SearchDocumentsAgent started")
 
         try:
-            print("ВЫПОЛНЕНО 1")
             message_addr = get_action_arguments(action_node, 1)[0]
 
             request = self.extract_request(message_addr)
@@ -81,13 +80,7 @@ class SearchDocumentsAgent(IntegrationAgent):
             ai = AIComponents('ru_core_news_sm')
             engine = SearchEngine(ai)
             results = engine.search(request)
-            print("ЕСТЬ 6")
-
-            doc_ids_str = "\n".join(
-                f"{i+1}) {doc_id}" for i, (doc_id, score) in enumerate(results) if score > 0
-            )
-
-            engine.save_info_in_KB(doc_ids_str,request)
+            engine.save_info_in_KB(results, request)
 
         except Exception as e:
             self.logger.info("SearchDocumentsAgent: finished with an error %s", e)

@@ -153,6 +153,7 @@ class SearchEngine:
         nrel_doc_vectors = ScKeynodes.resolve("nrel_doc_vectors", sc_type.CONST_NODE_ROLE)
         nrel_idtf = ScKeynodes.resolve("nrel_idtf", sc_type.CONST_NODE_ROLE)
         nrel_vectorized_doc = ScKeynodes.resolve("nrel_vectorized_doc", sc_type.CONST_NODE_ROLE)
+        nrel_web_link = ScKeynodes.resolve("nrel_web_link", sc_type.CONST_NODE_ROLE)
         infoAlias = '_info'
         vectors_tupleAlias = '_corpus'
         # проверяем существует ли уже векторизованные документы из диска и удаляем их
@@ -179,6 +180,7 @@ class SearchEngine:
         vectorAlias = '_vector'
         idtfAlias = '_idtf'
         vectorized_docAlias= '_vectorized_doc'
+        webLinkAlias = '_webLink'
 
         template = ScTemplate()
         template.triple(
@@ -200,16 +202,28 @@ class SearchEngine:
             sc_type.VAR_PERM_POS_ARC,
             nrel_vectorized_doc
         )
+        template.quintuple(
+            vectorAlias,
+            sc_type.VAR_COMMON_ARC,
+            sc_type.VAR_NODE_LINK >> webLinkAlias,
+            sc_type.VAR_PERM_POS_ARC,
+            nrel_web_link
+        )
         search_get_from_set = search_by_template(template)
 
         self.doc_vectors = {}
+        self.doc_links = {} 
         for result in search_get_from_set:
             idtf_link = result.get(idtfAlias)
             vectorized_doc_link = result.get(vectorized_docAlias)
             idtf = get_link_content_data(idtf_link)
             vectorized_doc = get_link_content_data(vectorized_doc_link)
+            web_link_link = result.get(webLinkAlias)
+            web_link = get_link_content_data(web_link_link)
             numbers = [float(x) for x in vectorized_doc.split()]
             self.doc_vectors[idtf] = numbers
+            if web_link:
+                self.doc_links[idtf] = web_link
 
     def lemmatize(self, text):
         tokens = nltk.word_tokenize(text.lower(), language='russian')
@@ -225,8 +239,7 @@ class SearchEngine:
         cleaned_query = clean_text(query)
         lemmatized_query = self.lemmatize(cleaned_query)
         # Векторизация запроса
-        query_vector = self.vectorizer.transform([lemmatized_query]).toarray()[0]
-        
+        query_vector = self.vectorizer.transform([lemmatized_query]).toarray()[0]        
 
         # Косинусное сходство
         similarities = cosine_similarity([query_vector], self.doc_vectors_array)[0]
@@ -234,11 +247,14 @@ class SearchEngine:
         ranked = sorted(zip(self.doc_ids, similarities), key=lambda x: x[1], reverse=True)
         return ranked
 
-    def save_info_in_KB(self,doc_ids_str,request):
+    def save_info_in_KB(self, results, request):
         concept_request_answer = ScKeynodes.resolve("concept_request_answer", sc_type.CONST_NODE_CLASS)
         nrel_request = ScKeynodes.resolve("nrel_request", sc_type.CONST_NODE_NON_ROLE)
         nrel_docs = ScKeynodes.resolve("nrel_docs", sc_type.CONST_NODE_NON_ROLE)
-        # проверяем существует ли уже векторизованные документы из диска и удаляем их
+        nrel_format = ScKeynodes.resolve("nrel_format", sc_type.CONST_NODE_NON_ROLE)
+        format_html = ScKeynodes.resolve("format_html", sc_type.CONST_NODE)
+
+        # Удаляем старые результаты
         template = ScTemplate()
         template.triple(
             concept_request_answer,
@@ -248,27 +264,38 @@ class SearchEngine:
         search_results = search_by_template(template)
         for result in search_results:
             erase_connectors(result[0], result[2], sc_type.VAR_PERM_POS_ARC)
-        doc_ids_str_link = generate_link(
-                doc_ids_str,
-                ScLinkContentType.STRING,
-                link_type=sc_type.CONST_NODE_LINK,
-            )
-        request_link = generate_link(
-                request,
-                ScLinkContentType.STRING,
-                link_type=sc_type.CONST_NODE_LINK,
-            )
+
+        # Создаём HTML со ссылками
+        # Формируем HTML-строку с результатами
+        html_parts = []
+        for i, (doc_id, score) in enumerate(results):
+            if score > 0:
+                web_link = self.doc_links.get(doc_id)
+                if web_link:
+                    html_parts.append(f'<a href="{web_link}" target="_blank">{i+1}) {doc_id}</a>')
+                else:
+                    html_parts.append(f'{i+1}) {doc_id}')
+        html_str = '<br>'.join(html_parts)
+        html_link = generate_link(html_str, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK)
+
+
+        # Добавляем файл с HTML и устанавливаем формат
+        generate_non_role_relation(html_link, format_html, nrel_format)
+
+        request_link = generate_link(request, ScLinkContentType.STRING, link_type=sc_type.CONST_NODE_LINK)
+
         nodeAlias = '_node'
         template = ScTemplate()
+        
         template.triple(
             concept_request_answer,
             sc_type.VAR_PERM_POS_ARC,
-            sc_type.VAR_NODE>>nodeAlias,
+            sc_type.VAR_NODE >> nodeAlias,
         )
         template.quintuple(
             nodeAlias,
             sc_type.VAR_COMMON_ARC,
-            doc_ids_str_link,
+            html_link,
             sc_type.VAR_PERM_POS_ARC,
             nrel_docs,
         )

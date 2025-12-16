@@ -7,7 +7,7 @@ def crawl_drive(service):
         response = service.files().list(
             q=query_files,
             pageSize=100,
-            fields="nextPageToken, files(id, name, mimeType)",
+            fields="nextPageToken, files(id, name, mimeType, webViewLink)",
             pageToken=page_token
         ).execute()
         files.extend(response.get('files', []))
