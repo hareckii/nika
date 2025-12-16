@@ -71,7 +71,8 @@ class IndexingAgent(IntegrationAgent):
         self.logger.info("IndexingAgent started")
 
         try:
-            service = self.authorize()            
+            message_addr = get_action_arguments(action_node, 1)[0]
+            service = self.authorize(message_addr)            
             files = crawl_drive(service)
 
             self.logger.info(f"Всего файлов: {len(files)}")
@@ -92,29 +93,11 @@ class IndexingAgent(IntegrationAgent):
 
         return ScResult.OK
     
-    def authorize(self):
-        nrel_auth_session = ScKeynodes.resolve("nrel_auth_session", sc_type.CONST_NODE_CLASS)
-        concept_user = ScKeynodes.resolve("concept_user", sc_type.CONST_NODE_CLASS)
-
-        author_alias = "_author"
-        template = ScTemplate()
-        template.quintuple(
-            sc_type.VAR_NODE >> author_alias,
-            sc_type.VAR_COMMON_ARC,
-            sc_type.VAR_NODE_LINK,
-            sc_type.VAR_PERM_POS_ARC,
-            nrel_auth_session
-        )
-        template.triple(
-            concept_user,
-            sc_type.VAR_PERM_POS_ARC,
-            author_alias,
-        )
-
-        result = search_by_template(template)
-        self.author_node: ScAddr
-        if result:
-            self.author_node = result[0].get(author_alias)
+    def authorize(self, message_addr):
+        nrel_authors = ScKeynodes.resolve("nrel_authors", sc_type.CONST_NODE_CLASS)
+        author = search_element_by_non_role_relation(message_addr, nrel_authors)
+        if author:
+            self.author_node = author
         else:
             return ScResult.OK
 
