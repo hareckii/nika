@@ -1,0 +1,118 @@
+{
+  "tests": 20,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "PhraseGenerationTest",
+      "tests": 9,
+      "testsuite": [
+        {
+          "name": "ActionDoesNotHaveALinkTemplate",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 35
+        },
+        {
+          "name": "TestIsCorrect",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 51
+        },
+        {
+          "name": "TestIsCorrect2",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 70
+        },
+        {
+          "name": "TestIsCorrect3",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 89
+        },
+        {
+          "name": "TestTemplateHasNoVariables",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 109
+        },
+        {
+          "name": "AgentDoesNotGenerateAPhrase",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 129
+        },
+        {
+          "name": "GeneratedLinkDoesNotHaveALanguageNode",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 144
+        },
+        {
+          "name": "actionDoesNotHaveAnyParameters",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 178
+        },
+        {
+          "name": "ParameterNodeIsEmpty",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testPhraseGenerationAgent.cpp",
+          "line": 194
+        }
+      ]
+    },
+    {
+      "name": "StandardMessageReplyTest",
+      "tests": 11,
+      "testsuite": [
+        {
+          "name": "ProcessingAtomicMessageIsSuccessful",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 40
+        },
+        {
+          "name": "ProcessingNonatomicMessageIsSuccessful",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 76
+        },
+        {
+          "name": "ActionDoesntHaveAMessageNode",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 111
+        },
+        {
+          "name": "SystemDoesNotHaveTemplateForMessage",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 125
+        },
+        {
+          "name": "MessagesLanguageIsNotFound",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 149
+        },
+        {
+          "name": "FirstMessageIsNotFound",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 170
+        },
+        {
+          "name": "FirstPhraseClassIsNotFound",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 191
+        },
+        {
+          "name": "PhraseForMessageIsNotFound",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 214
+        },
+        {
+          "name": "LinkByPhraseIsNotGenerated",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 235
+        },
+        {
+          "name": "MessagesAndPhraseClassesDoNotMatch1",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 254
+        },
+        {
+          "name": "MessagesAndPhraseClassesDoNotMatch2",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/dialog-control-module\/test\/units\/testStandardMessageReplyAgent.cpp",
+          "line": 273
+        }
+      ]
+    }
+  ]
+}

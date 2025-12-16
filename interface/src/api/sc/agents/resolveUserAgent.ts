@@ -16,12 +16,18 @@ const baseKeynodes = [
 ];
 
 const getUser = async () => {
-    const session = getCookie('auth_session');
+    const session = getCookie("auth_session");
+    console.log("SESSION: ", session);
+
     if(!session) return null;
+    console.log("@@@@@@@@@@@@@@@@@@@@");
     
     const res = await client.searchLinksByContents([session]);
     const session_link = res[0][0];
-    if(!session_link) return null;
+    if(!session_link) {
+        console.log("Did not find session link: ", session);
+        return null;
+    }
 
     const keynodes = await client.resolveKeynodes(baseKeynodes);
     const user = '_user';
@@ -90,12 +96,13 @@ const createNotAuthUser = async () => {
 
 export const resolveUserAgent = async () => {    
     for (let attempt = 1; attempt <= 10; attempt++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        // await new Promise(resolve => setTimeout(resolve, 100));
+        console.log("!!!!!!!!!!!!!!!!!");
         const user = await getUser();
         if (user !== null) {
             return user;
         }
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
     return await createNotAuthUser();
 };

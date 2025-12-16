@@ -1,0 +1,37 @@
+{
+  "tests": 5,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "MessageTopicClassificationTest",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "connectionTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-classification-module\/test\/units\/testMessageTopicClassification.cpp",
+          "line": 16
+        },
+        {
+          "name": "classifyMessageWithoutEntityTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-classification-module\/test\/units\/testMessageTopicClassification.cpp",
+          "line": 31
+        },
+        {
+          "name": "classifyMessageWithEntityTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-classification-module\/test\/units\/testMessageTopicClassification.cpp",
+          "line": 61
+        },
+        {
+          "name": "classifyMessageWithTwoEntitiesTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-classification-module\/test\/units\/testMessageTopicClassification.cpp",
+          "line": 106
+        },
+        {
+          "name": "classifyMessageWithTwoEntitiesSameRoleTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-classification-module\/test\/units\/testMessageTopicClassification.cpp",
+          "line": 164
+        }
+      ]
+    }
+  ]
+}

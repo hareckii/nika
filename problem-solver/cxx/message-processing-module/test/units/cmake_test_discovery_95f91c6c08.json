@@ -1,0 +1,42 @@
+{
+  "tests": 6,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "MessageProcessingAgentTest",
+      "tests": 6,
+      "testsuite": [
+        {
+          "name": "notValidMessageTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 16
+        },
+        {
+          "name": "messageIsNotAboutLetterSearchTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 32
+        },
+        {
+          "name": "generateAnswerWithSingleWordTest1",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 48
+        },
+        {
+          "name": "generateAnswerWithSingleWordTest2",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 73
+        },
+        {
+          "name": "generateAnswerWithSeveralWordsTest",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 99
+        },
+        {
+          "name": "generateAnswerWithoutWords",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-processing-module\/test\/units\/testMessageProcessingModule.cpp",
+          "line": 124
+        }
+      ]
+    }
+  ]
+}

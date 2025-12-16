@@ -1,3 +1,5 @@
+find_package(CURL REQUIRED)
+
 set(SOURCES
     "MessageClassificationModule.cpp"
     "agent/AlternativeMessageTopicClassificationAgent.cpp"
@@ -45,6 +47,7 @@ target_link_libraries(message-classification-module
     LINK_PUBLIC scl-machine::inference
     LINK_PUBLIC common
     LINK_PUBLIC nlohmann_json::nlohmann_json
+    LINK_PUBLIC CURL::libcurl 
 )
 
 target_include_directories(message-classification-module

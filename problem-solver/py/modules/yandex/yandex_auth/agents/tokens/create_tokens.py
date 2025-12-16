@@ -1,8 +1,10 @@
 import logging
 
-from auth.agents.token.create_tokens import CreateTokensAgent
+from auth.base.agents.token.create_tokens import CreateTokensAgent
 from auth.models import OauthClient
-from modules.yandex.yandex_auth.services.yandex_oauth_token_service import YandexOauthTokenService
+from modules.yandex.yandex_auth.services.yandex_oauth_token_service import (
+    YandexOauthTokenService,
+)
 from yandex_secrets_env import YANDEX_CLIENT_ID, YANDEX_CLIENT_SECRET
 
 

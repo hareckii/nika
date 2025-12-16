@@ -1,7 +1,9 @@
 import logging
 
-from auth.agents.user.create_author import CreateAuthorAgent
-from modules.yandex.yandex_auth.services.yandex_oauth_user_service import YandexOauthUserService
+from auth.base.agents.user.create_author import CreateAuthorAgent
+from modules.yandex.yandex_auth.services.yandex_oauth_user_service import (
+    YandexOauthUserService,
+)
 
 
 logging.basicConfig(

@@ -1,0 +1,32 @@
+{
+  "tests": 4,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "MessageReplyAgentTest",
+      "tests": 4,
+      "testsuite": [
+        {
+          "name": "messageProcessingWithTextLinkSuccessful",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-reply-module\/test\/units\/testMessageReplyAgent.cpp",
+          "line": 54
+        },
+        {
+          "name": "messageProcessingWithSoundLinkSuccessful",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-reply-module\/test\/units\/testMessageReplyAgent.cpp",
+          "line": 74
+        },
+        {
+          "name": "argumentIsNotALink",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-reply-module\/test\/units\/testMessageReplyAgent.cpp",
+          "line": 94
+        },
+        {
+          "name": "linkSpecifiedIncorrectly",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/message-reply-module\/test\/units\/testMessageReplyAgent.cpp",
+          "line": 112
+        }
+      ]
+    }
+  ]
+}

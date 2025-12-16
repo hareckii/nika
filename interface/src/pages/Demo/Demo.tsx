@@ -38,14 +38,34 @@ export const Demo = () => {
     const url = SC_WEB_URL + '/?sys_id=answer_structure&scg_structure_view_only=true';
 
     useEffect(() => {
-        (async () => {
+        let isMounted = true;
+        
+        const initialize = async () => {
             setIsLoading(true);
-            const user = await resolveUserAgent();
-            if (!user) return;
-            setUser(user);
-            await initChat([user]);
-            setIsLoading(false);
-        })();
+            try {
+                const user = await resolveUserAgent();
+                
+                if (!isMounted) return;
+                
+                if (user) {
+                    setUser(user);
+                    await initChat([user]);
+                } else {
+                    // Обработка случая когда пользователь не найден
+                    console.warn('User not resolved');
+                }
+            } catch (error) {
+                console.error('Initialization error:', error);
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+        
+        initialize();
+        
+        return () => { isMounted = false; };
     }, [initChat]);
 
     return (

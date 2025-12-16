@@ -1,0 +1,37 @@
+{
+  "tests": 5,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "NonAtomicActionInterpreterTest",
+      "tests": 5,
+      "testsuite": [
+        {
+          "name": "checkDynamicArguments",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/non-atomic-action-interpreter-module\/test\/units\/testNonAtomicActionInterpreterAgent.cpp",
+          "line": 70
+        },
+        {
+          "name": "checkThenSequence",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/non-atomic-action-interpreter-module\/test\/units\/testNonAtomicActionInterpreterAgent.cpp",
+          "line": 113
+        },
+        {
+          "name": "checkElseSequence",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/non-atomic-action-interpreter-module\/test\/units\/testNonAtomicActionInterpreterAgent.cpp",
+          "line": 145
+        },
+        {
+          "name": "checkGotoSequence",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/non-atomic-action-interpreter-module\/test\/units\/testNonAtomicActionInterpreterAgent.cpp",
+          "line": 177
+        },
+        {
+          "name": "checkArgumentsMatching",
+          "file": "\/home\/hareckii\/university\/nika\/problem-solver\/cxx\/non-atomic-action-interpreter-module\/test\/units\/testNonAtomicActionInterpreterAgent.cpp",
+          "line": 212
+        }
+      ]
+    }
+  ]
+}

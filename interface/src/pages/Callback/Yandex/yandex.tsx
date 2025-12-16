@@ -6,7 +6,6 @@ import { generateSessionId, setCookie } from '@hooks/useGoogleAuth';
 export const YandexCallback = () => {
   const history = useHistory();
   const location = useLocation();
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
   const handleYandexCode = async (code: string) => {
@@ -14,7 +13,6 @@ export const YandexCallback = () => {
       const newSessionId = generateSessionId();
       console.log('Generate auth session:', newSessionId);
       setCookie('auth_session', newSessionId, 7);
-      setSessionId(newSessionId);
       
       await call_create_author_agent(
         code, 
