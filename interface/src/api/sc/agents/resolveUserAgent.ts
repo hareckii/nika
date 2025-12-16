@@ -89,8 +89,8 @@ const createNotAuthUser = async () => {
 }
 
 export const resolveUserAgent = async () => {    
-    for (let attempt = 1; attempt <= 5; attempt++) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+    for (let attempt = 1; attempt <= 10; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         const user = await getUser();
         if (user !== null) {

@@ -30,6 +30,7 @@ export const useYandexAuth = () => {
       `&force_confirm=yes` +
       `&scope=${encodeURIComponent(scopes.join(' '))}`;
 
+
     window.location.href = authUrl;
   }, []);
 
