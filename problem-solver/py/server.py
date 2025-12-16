@@ -10,6 +10,7 @@ from modules import (
     GoogleCalendarModule,
     LaunchModule,
     WeatherModule,
+    GoogleDiskModule
 )
 from modules.yandex.yandex_auth.auth_module import YandexAuthModule
 from modules.yandex.yandex_disc.yandex_disc_module import YandexDiscModule
@@ -33,6 +34,7 @@ def main(args: dict):
             WeatherModule(),
             GoogleAuthModule(),
             GoogleCalendarModule(),
+            GoogleDiskModule(),
             GmailModule(),
             LaunchModule(),
             ContactModule(),

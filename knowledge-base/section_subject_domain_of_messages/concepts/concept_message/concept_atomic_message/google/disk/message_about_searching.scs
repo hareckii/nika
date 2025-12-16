@@ -1,0 +1,7 @@
+concept_search_documents_message
+<- sc_node_class;
+=> nrel_main_idtf:
+	[сообщение о поиске документов по запросу]
+	    (* <- lang_ru;; *);
+	[message about searhing documents using request]
+	    (* <- lang_en;; *);;
