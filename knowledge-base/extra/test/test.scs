@@ -1,7 +1,0 @@
-actionsearch1
-->rrel_1:test_message1;
-<-action;
-<-action_search_documents;;
-
-test_message1
--> rrel_request:[программирование];;

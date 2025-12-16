@@ -11,7 +11,6 @@ from modules import (
     GoogleCalendarModule,
     LaunchModule,
     WeatherModule,
-    GoogleDiskModule
 )
 
 
@@ -33,7 +32,6 @@ def main(args: dict):
             WeatherModule(),
             GoogleAuthModule(),
             GoogleCalendarModule(),
-            GoogleDiskModule(),
             GmailModule(),
             LaunchModule(),
             ContactModule(),

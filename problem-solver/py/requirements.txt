@@ -25,16 +25,3 @@ typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.5.0
 websocket-client==1.8.0
-pydantic
-email-validator
-google-api-python-client 
-google-auth-httplib2 
-google-auth-oauthlib
-spacy 
-nltk 
-PyPDF2 
-python-docx 
-scikit-learn
-pymorphy3 
-pymorphy3-dicts-ru
-cryptography

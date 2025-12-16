@@ -40,7 +40,6 @@ export const useGoogleAuth = () => {
       'profile', 
       'https://www.googleapis.com/auth/calendar',
       'https://mail.google.com/',
-      'https://www.googleapis.com/auth/drive.readonly',
     ];
     const responseType = 'code';
     

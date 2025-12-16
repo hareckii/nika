@@ -4,4 +4,3 @@ from modules.google.calendar_module import GoogleCalendarModule
 from modules.google.mail.module import GmailModule
 from modules.launch_app.module import LaunchModule
 from modules.weather.weather_module import WeatherModule
-from modules.google.disk.disk_module import GoogleDiskModule

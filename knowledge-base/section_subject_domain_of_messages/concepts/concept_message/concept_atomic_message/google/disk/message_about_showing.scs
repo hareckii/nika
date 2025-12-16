@@ -1,7 +1,0 @@
-concept_show_documents_message
-<- sc_node_class;
-=> nrel_main_idtf:
-	[сообщение о показе документов после запроса]
-	    (* <- lang_ru;; *);
-	[message about showing documents after request]
-	    (* <- lang_en;; *);;

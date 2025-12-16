@@ -83,7 +83,7 @@ class CheckTokenAgent(ScAgentClassic, ABC):
                 ScLinkContentType.STRING,
                 generate_link(access_token),
             )
-            set_link_contents(new_link_content)
+            set_link_contents([new_link_content])
 
         generate_action_result(action_element, (access_token_link))
         finish_action_with_status(action_element, is_success=True)
