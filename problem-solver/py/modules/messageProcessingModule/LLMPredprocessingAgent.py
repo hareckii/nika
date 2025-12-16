@@ -1,10 +1,9 @@
 import ast
 import re
 import logging
-from sc_client.models import ScAddr, ScLinkContentType, ScTemplate
+from sc_client.models import ScAddr, ScLinkContentType, ScTemplate, ScConstruction
 from sc_client.constants import sc_type
 from sc_client.client import search_by_template,generate_by_template, get_elements_types
-
 from sc_kpm import ScAgentClassic, ScResult
 from sc_kpm.sc_sets import ScSet
 from sc_kpm.utils import (
@@ -17,14 +16,13 @@ from sc_kpm.utils import (
     get_element_system_identifier,
     generate_non_role_relation,
     generate_node,
-    generate_link
+    generate_link,
 )
 from sc_kpm.utils.action_utils import (
      generate_action_result,
     finish_action_with_status,
     get_action_arguments,
 )
-
 from sc_kpm import ScKeynodes
 
 from dotenv import load_dotenv
@@ -32,7 +30,7 @@ import os
 import json
 
 from langchain.chat_models import init_chat_model
-
+from deep_translator import GoogleTranslator
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s | %(name)s | %(message)s", datefmt="[%d-%b-%y %H:%M:%S]"
@@ -175,16 +173,12 @@ class LLMPredprocessingAgent(ScAgentClassic):
                 rrel_input_json,
             )
             search_result_get_llm_templates=search_by_template(get_llm_templates_temp)[0]
-
-
             input_json_node=search_result_get_llm_templates.get(_input_json)
             entity_template=search_result_get_llm_templates.get(_entity_template)
             prompt_json_node=search_result_get_llm_templates.get(_prompt_json)
-
-
-            input_json=get_link_content_data(input_json_node)# получаем из узла джейсончик номер раз в виде строки
-            input_json_dict=self.str_to_dict(input_json) # преобразуем его в словарь
-            prompt_json=get_link_content_data(prompt_json_node) #!!!!!!!!!!!!!!!!!!!!!! ПРОМТОВЫЙ  ДЖЕЙСОН В СТРОКОВОМ ВИДЕ
+            input_json=get_link_content_data(input_json_node)                                     # получаем из узла джейсончик номер раз в виде строки
+            input_json_dict=self.str_to_dict(input_json)                                          # преобразуем его в словарь
+            prompt_json=get_link_content_data(prompt_json_node)                                   #!!!!!!!!!!!!!!!!!!!!!! ПРОМТОВЫЙ  ДЖЕЙСОН В СТРОКОВОМ ВИДЕ
             prompt_json = prompt_json.replace("(", "[")
             prompt_json = prompt_json.replace(")", "]")
             #---------------CHECK----------------------------------------------------------
@@ -195,8 +189,7 @@ class LLMPredprocessingAgent(ScAgentClassic):
             self.logger.info(prompt_json)
             #-------------------------------------------------------------------------------
             # Ищем все параметры для энтити из темплейта для энтити
-            entity=ScKeynodes.resolve(
-                    "entity", sc_type.CONST_NODE)
+            entity=ScKeynodes.resolve("entity", sc_type.CONST_NODE)
             _param="_param"
             _nrel_param="_nrel_param"
 
@@ -234,14 +227,38 @@ class LLMPredprocessingAgent(ScAgentClassic):
                 #-------------------------------------------------------------------------------
 
             input_json_dict['question']=get_link_content_data(question)
+            input_json_dict['question_type']=get_element_system_identifier(message_type_node)
+            self.logger.info(f'Updated Input JSON:{input_json_dict}')
+
             some_link = generate_link(" ")
             if get_elements_types(some_link) == get_elements_types(entity_node):
                 self.logger.info("Entity type is link")
-                input_json_dict['entity']=get_link_content_data(entity_node)
+                entity_node_link=entity_node # сразу меняю названия переменных чтоб потом не было путаницы
+                nrel_main_idtf = ScKeynodes.resolve("nrel_main_idtf", sc_type.CONST_NODE_NON_ROLE)
+                concept_wit_entity = ScKeynodes.resolve("concept_wit_entity", sc_type.CONST_NODE_CLASS)
+                lang_ru = ScKeynodes.resolve("lang_ru", sc_type.CONST_NODE_CLASS) 
+                # 1. Получить текст энтити
+                entity_text=get_link_content_data(entity_node_link)
+                self.logger.info(entity_text)
+                # 2. Перевести на английский
+                translator = GoogleTranslator(source='ru', target='en')
+                entity_system_idtf = translator.translate(entity_text)
+                self.logger.info('EMERGENCY CHECK POINT')
+                self.logger.info('TRANSLATION')
+                self.logger.info(entity_system_idtf)
+                # 3. Создать узел с систем ай ди
+                entity_node = ScKeynodes.resolve(entity_system_idtf,sc_type.CONST_NODE)
+                # 4. Прикрепить линку как основной идентификатор
+                generate_non_role_relation(entity_node, entity_node_link, nrel_main_idtf)
+                # 5. Прикрепить сущность вита
+                generate_connector(sc_type.CONST_PERM_POS_ARC, concept_wit_entity, entity_node)
+                generate_connector(sc_type.CONST_PERM_POS_ARC, lang_ru, entity_node_link) #фокус покус
+                # 6. Добавить в инпут
+                input_json_dict['entity']=entity_text
             else:
                 self.logger.info("Entity type is NOT link")
                 input_json_dict['entity']=get_element_system_identifier(entity_node)
-
+            self.logger.info(f'Updated Input JSON:{input_json_dict}')
             # Ищем значения в БЗ и подставляем что есть
             for nrel_param in nrel_params:
                 get_entity_params_template=ScTemplate()
@@ -262,7 +279,7 @@ class LLMPredprocessingAgent(ScAgentClassic):
                 else:
                     self.logger.info(f"Nrel value not found for {nrel_param}")
             self.logger.info('CHECK POINT №4')
-            self.logger.info(input_json_dict)
+            self.logger.info(f'Updated Input JSON:{input_json_dict}')
             input_json_str=self.dict_to_str(input_json_dict) # !!!!!!!!!!!!!!!!!!!!ИНПУТОВЫЙ ДЖЕЙСОН УЖЕ В СТРОКОВОМ ВИДЕ
             #---------------CHECK----------------------------------------------------------
             # отдаем джейсончики в модель
