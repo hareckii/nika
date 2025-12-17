@@ -1,8 +1,7 @@
 from sc_kpm import ScModule
-
-from .weather_agent import WeatherAgent
-
+from .WeatherAgent import WeatherAgent
+from .LLMPredprocessingAgent import LLMPredprocessingAgent
 
 class WeatherModule(ScModule):
     def __init__(self):
-        super().__init__(WeatherAgent())
+        super().__init__(WeatherAgent(), LLMPredprocessingAgent())

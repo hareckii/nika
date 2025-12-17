@@ -38,3 +38,5 @@ scikit-learn
 pymorphy3 
 pymorphy3-dicts-ru
 cryptography
+langchain
+langchain-google-genai
