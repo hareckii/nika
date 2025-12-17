@@ -7,12 +7,15 @@ const actionInitiated = 'action_initiated';
 const actionReplyToMessage = 'action_reply_to_message';
 const rrel1 = 'rrel_1';
 const rrel2 = 'rrel_2';
+const rrel3 = 'rrel_3'
 const nrelAuthors = 'nrel_authors';
 const conceptTextFile = 'concept_text_file';
 const langEn = 'lang_en';
 const langRu = 'lang_ru';
 const actionFinished = 'action_finished';
 const result = 'nrel_result';
+const procProg = 'message_processing_program'
+const llmProg = 'llm_message_processing_program'
 
 const baseKeynodes = [
     { id: action, type: ScType.ConstNodeClass },
@@ -20,12 +23,15 @@ const baseKeynodes = [
     { id: actionReplyToMessage, type: ScType.ConstNodeClass },
     { id: rrel1, type: ScType.ConstNodeRole },
     { id: rrel2, type: ScType.ConstNodeRole },
+    { id: rrel3, type: ScType.ConstNodeRole },
     { id: nrelAuthors, type: ScType.ConstNodeNonRole },
     { id: conceptTextFile, type: ScType.ConstNodeClass },
     { id: langEn, type: ScType.ConstNodeClass },
     { id: langRu, type: ScType.ConstNodeClass },
     { id: actionFinished, type: ScType.ConstNodeClass },
     { id: result, type: ScType.ConstNodeNonRole },
+    { id: procProg, type: ScType.ConstNode },
+    { id: llmProg, type: ScType.ConstNode },
 ];
 
 export const generateLinkText = async (messageText: string) => {
@@ -43,7 +49,15 @@ const describeAgent = async (
     author: ScAddr | string,
     keynodes: Record<string, ScAddr>,
     linkAddr: ScAddr,
+    isLlmMode: boolean
 ) => {
+    let res;
+    if(isLlmMode){
+        res = keynodes[llmProg]
+    }
+    else{
+        res = keynodes[procProg]
+    }
     const actionNodeAlias = '_action_node';
 
     const template = new ScTemplate();
@@ -64,6 +78,14 @@ const describeAgent = async (
         chatNode,
         ScType.VarPermPosArc,
         keynodes[rrel2],
+    );
+    // TODO: change 3 addr 
+    template.quintuple(
+        actionNodeAlias,
+        ScType.VarPermPosArc,
+        res,
+        ScType.VarPermPosArc,
+        keynodes[rrel3],
     );
     template.quintuple(
         actionNodeAlias,
@@ -94,14 +116,16 @@ const findNewMessageNode = async (circuitAddr: ScAddr) => {
 export const newMessageAgent = async (
     chatNode: ScAddr, 
     author: ScAddr | string,
-    linkAddr: ScAddr
+    linkAddr: ScAddr,
+    isLlmMode: boolean
 ) => {
     const keynodes = await client.resolveKeynodes(baseKeynodes);
     const [template, userActionNodeAlias] = await describeAgent(
         chatNode,
         author,
         keynodes, 
-        linkAddr
+        linkAddr,
+        isLlmMode
         );
 
     const circuitAddr = await makeAgent(template, userActionNodeAlias);

@@ -12,33 +12,12 @@
       "cacheVariables": {
         "SC_BUILD_TESTS": true
       }
-    },
-    {
-      "name": "release-conan",
-      "displayName": "Release config (Conan)",
-      "description": "Release config (Conan dependencies used)",
-      "installDir": "${sourceDir}/build/Release/install",
-      "inherits": "conan-release",
-      "generator": "Ninja"
-    },
-    {
-      "name": "release-with-tests-conan",
-      "displayName": "Release config with tests (Conan)",
-      "description": "Release config with tests (Conan dependencies used)",
-      "inherits": "release-conan",
-      "cacheVariables": {
-        "SC_BUILD_TESTS": true
-      }
     }
   ],
   "buildPresets": [
     {
       "name": "debug",
       "configurePreset": "debug-conan"
-    },
-    {
-      "name": "release",
-      "configurePreset": "release-conan"
     }
   ]
 }

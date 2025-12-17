@@ -16,7 +16,7 @@ interface IMessage {
     isLoading?: boolean;
 }
 
-export const useChat = (user: ScAddr | null) => {
+export const useChat = (user: ScAddr | null, isLlmMode: boolean) => {
     const [messages, setMessages] = useState<IMessage[]>([]);
     const [chatNode, setChatNode] = useState<ScAddr | null>(null);
     const [shouldEnd, setShouldEnd] = useState(false);
@@ -106,7 +106,7 @@ export const useChat = (user: ScAddr | null) => {
                 isLoading: true,
             };
             setMessages((prev) => [...prev, message]);
-            await newMessageAgent(chatNode, user, linkAddr);
+            await newMessageAgent(chatNode, user, linkAddr, isLlmMode);
 
             setIsAgentAnswer(false);
         },
