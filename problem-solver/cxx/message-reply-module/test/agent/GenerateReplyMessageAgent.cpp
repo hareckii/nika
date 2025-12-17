@@ -7,7 +7,9 @@ using namespace messageReplyModuleTest;
 
 ScResult GenerateReplyMessageAgent::DoProgram(ScActionInitiatedEvent const & event, ScAction & action)
 {
-  if (!actionIsValid(action))
+  ScAddr program = action.GetArgument(ScKeynodes::rrel_1);
+
+  if (!actionIsValid(action, program))
   {
     return action.FinishUnsuccessfully();
   }
@@ -35,13 +37,13 @@ ScAddr GenerateReplyMessageAgent::GetActionClass() const
   return messageReplyModule::MessageReplyKeynodes::action_interpret_non_atomic_action;
 }
 
-bool GenerateReplyMessageAgent::actionIsValid(const ScAddr & actionAddr)
+bool GenerateReplyMessageAgent::actionIsValid(const ScAddr & actionAddr, const ScAddr & program)
 {
   ScTemplate scTemplate;
   scTemplate.Quintuple(
       actionAddr,
       ScType::VarPermPosArc,
-      messageReplyModule::MessageReplyKeynodes::message_processing_program,
+      program,
       ScType::VarPermPosArc,
       ScKeynodes::rrel_1);
   scTemplate.Quintuple(

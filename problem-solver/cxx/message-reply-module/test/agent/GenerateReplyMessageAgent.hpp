@@ -13,7 +13,7 @@ public:
   ScResult DoProgram(ScActionInitiatedEvent const & event, ScAction & action) override;
 
 private:
-  bool actionIsValid(ScAddr const & actionAddr);
+  bool actionIsValid(ScAddr const & actionAddr, const ScAddr & program);
 };
 
 }  // namespace messageReplyModuleTest

@@ -62,10 +62,8 @@ export const Demo = () => {
             }
             if (!user) return;
             
-            // Используем режим при отправке сообщения
             if (isLlmMode) {
                 console.log('Отправка в LLM режиме');
-                // Здесь может быть специфичная логика для LLM режима
             } else {
                 console.log('Отправка в стандартном режиме');
             }
@@ -109,25 +107,10 @@ export const Demo = () => {
         initialize();
         
         return () => { isMounted = false; };
-    }, [initChat, isLlmMode]);
+    }, [initChat]);
 
     return (
         <Wrapper>
-            {isLlmMode && (
-                <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    background: 'linear-gradient(to right, #8b6358, #9A7469)',
-                    color: 'white',
-                    padding: '5px 10px',
-                    borderRadius: '15px',
-                    fontSize: '12px',
-                    zIndex: 1000
-                }}>
-                    🤖 AI Режим
-                </div>
-            )}
             
             <ChatWrapper>
                 <Chat
