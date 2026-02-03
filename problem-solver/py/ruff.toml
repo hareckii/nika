@@ -23,24 +23,22 @@ exclude = [
 
 # ===== ФОРМАТИРОВАНИЕ =====
 [format]
-# Агрессивное форматирование
 quote-style = "double"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-# ===== LINTING =====
+# ===== ЛИНТИНГ =====
 [lint]
-# Включаем ВСЕ правила (по-хардкорному)
 select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort (сортировка импортов)
-    "UP", # pyupgrade
-    "ARG", # unused arguments
-    "COM", # commas
-    "ERA", # commented out code
-    "FBT", # boolean trap
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+    "ARG",
+    "COM",
+    "ERA",
+    "FBT",
 ]
 preview = true
 

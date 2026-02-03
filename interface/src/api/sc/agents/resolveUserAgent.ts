@@ -1,7 +1,7 @@
 import {ScTemplate, ScType} from 'ts-sc-client';
 import { client } from '@api/sc';
-import { getCookie, setCookie, generateSessionId } from '@hooks/useGoogleAuth';
 import { generateLinkText } from './newMessageAgent';
+import { generateSessionId, getCookie, setCookie } from '@utils';
 
 const conceptUser = 'concept_user';
 const conceptDialog = 'concept_dialogue';

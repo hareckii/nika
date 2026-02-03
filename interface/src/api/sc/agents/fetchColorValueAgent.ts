@@ -52,7 +52,6 @@ export async function fetchColorValue(funcChange: ((color: string) => void)[]) {
             if (resultColor.length) {
                 let color = resultColor[0].data;
                 
-                // ДОБАВЬТЕ ПРОВЕРКУ ПЕРЕД ВЫЗОВОМ
                 if (funcChange[i] && typeof funcChange[i] === 'function') {
                     funcChange[i](color as string);
                 } else {
