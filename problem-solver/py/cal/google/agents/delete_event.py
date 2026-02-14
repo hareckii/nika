@@ -14,11 +14,9 @@ logging.basicConfig(
 
 class DeleteGoogleEventAgent(DeleteEventAgent, GoogleAgent):
     def __init__(self):
-        self._service: GoogleEventService | None = None
         super().__init__("action_delete_google_calendar_event")
+        self._service = GoogleEventService(self.logger)
 
     @property
     def event_service(self):
-        if self._service is None:
-            self._service = GoogleEventService(self.logger)
         return self._service

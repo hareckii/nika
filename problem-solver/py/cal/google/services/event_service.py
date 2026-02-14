@@ -13,9 +13,6 @@ class GoogleEventService(EventService):
     BASE_URL = "https://www.googleapis.com/calendar/v3"
 
     def __init__(self, logger):
-        """
-        Инициализация сервиса Google Calendar
-        """
         super().__init__()
         self.calendar_id = "primary"
         self.logger = logger

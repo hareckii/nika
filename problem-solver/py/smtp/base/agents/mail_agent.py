@@ -1,5 +1,7 @@
 import logging
 
+from abc import ABC, abstractmethod
+
 from sc_client.models import ScAddr
 from sc_kpm.identifiers import CommonIdentifiers
 from sc_kpm.sc_sets import ScStructure
@@ -14,6 +16,7 @@ from sc_kpm.utils.action_utils import (
 
 from auth.base.agents.integration_agent import IntegrationAgent
 from auth.base.models import User
+from smtp.base.services import SMTPService
 
 
 logging.basicConfig(
@@ -23,16 +26,18 @@ logging.basicConfig(
 )
 
 
-class MailAgent(IntegrationAgent):
+class MailAgent(IntegrationAgent, ABC):
     def __init__(self, action):
         super().__init__(action)
 
     @property
-    def check_token_agent_action(self) -> str:
-        return "action_check_google_token"
+    @abstractmethod
+    def service(self) -> SMTPService:
+        pass
 
-    def get_contact(self, name_link: ScAddr) -> User:
+    def get_contact(self, name_link: ScAddr) -> User | None:
         action_class_name = "action_find_contact"
+        logging.info("Trying to find contact...")
         action, is_successful = execute_agent(
             arguments={name_link: False, self.author_node: False},
             concepts=[
@@ -54,5 +59,7 @@ class MailAgent(IntegrationAgent):
             )
             name = get_link_content_data(name_link)
             email = get_link_content_data(email_link)
+            logging.info("Successfully find contact!")
             return User(name=name, email=email)
+        logging.error("Did not find contact")
         return None

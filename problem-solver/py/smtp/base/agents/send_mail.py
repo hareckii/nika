@@ -1,8 +1,6 @@
 import logging
-import smtplib
 
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from abc import ABC
 
 from sc_client.models import ScAddr
 from sc_kpm import ScKeynodes, ScResult
@@ -16,9 +14,8 @@ from sc_kpm.utils.action_utils import (
 )
 
 from auth.base.models import User
-from modules.google.mail.agents import MailAgent
-from modules.google.mail.models import Mail
-from secrets_env import GMAIL_PASS
+from smtp.base.agents import MailAgent
+from smtp.base.models import Mail
 
 
 logging.basicConfig(
@@ -28,9 +25,9 @@ logging.basicConfig(
 )
 
 
-class SendMailAgent(MailAgent):
-    def __init__(self):
-        super().__init__("action_send_mail")
+class SendMailAgent(MailAgent, ABC):
+    def __init__(self, action):
+        super().__init__(action)
         self.rrel_name = ScKeynodes.get("rrel_name")
         self.rrel_email = ScKeynodes.get("rrel_email")
         self.rrel_mail = ScKeynodes.get("rrel_mail")
@@ -62,35 +59,10 @@ class SendMailAgent(MailAgent):
         if mail is None:
             self.logger.error("Did not get mail")
             return ScResult.ERROR
-        res = self.send_mail(mail)
+        res = self.service.send_mail(mail)
         if not res:
             return ScResult.ERROR
         return ScResult.OK
-
-    def send_mail(self, mail: Mail):
-        email_sender = mail.sender.email
-        email_receiver = mail.receiver.email
-        subject = mail.subject
-        body = mail.body
-
-        # Создание сообщения
-        mail = MIMEMultipart()
-        mail["From"] = email_sender
-        mail["To"] = email_receiver
-        mail["Subject"] = subject
-        mail.attach(MIMEText(body, "plain"))
-
-        try:
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login(email_sender, GMAIL_PASS)
-                text = mail.as_string()
-                server.sendmail(email_sender, email_receiver, text)
-                self.logger.info("Send message")
-            return True
-        except Exception:
-            self.logger.error("Got error with email sending")
-            raise
 
     def get_mail(self, message_addr: ScAddr) -> Mail:
         contact: User | None = None
