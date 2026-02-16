@@ -1,5 +1,10 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+
+from auth.base.services import CryptoService
 
 
 class OauthService(ABC):
-    pass
+    @property
+    @abstractmethod
+    def crypto_service(self) -> CryptoService:
+        pass

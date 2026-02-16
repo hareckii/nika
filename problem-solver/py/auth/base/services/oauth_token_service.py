@@ -1,10 +1,12 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 from auth.base.models import OauthClient
-from auth.base.services import OauthService
+from auth.base.services import (
+    OauthService,
+)
 
 
-class OauthTokenService(OauthService):
+class OauthTokenService(OauthService, ABC):
     def __init__(self, client: OauthClient, token_url: str):
         self.client = client
         self.token_url = token_url

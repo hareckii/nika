@@ -1,11 +1,17 @@
 import base64
 
+from abc import ABC
+
 from cryptography.fernet import Fernet
 
 from secrets_env import CRYPTO_KEY
 
 
-class FernetTokenCrypto:
+class CryptoService(ABC):
+    ...
+
+
+class FernetCryptoService(CryptoService):
     def __init__(self, key: str):
         """Инициализация с ключом"""
         self.key = base64.urlsafe_b64encode(
@@ -34,4 +40,4 @@ class FernetTokenCrypto:
         return self.key.decode()
 
 
-crypto_service = FernetTokenCrypto(CRYPTO_KEY)
+crypto_service = FernetCryptoService(CRYPTO_KEY)
