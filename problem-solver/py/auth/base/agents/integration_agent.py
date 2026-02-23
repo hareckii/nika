@@ -14,6 +14,8 @@ from sc_kpm.utils.action_utils import (
 )
 
 from auth.base.models import User
+from auth.base.services import FernetCryptoService
+from secrets_env import CRYPTO_KEY
 
 
 class IntegrationAgent(ScAgentClassic, ABC):
@@ -22,6 +24,7 @@ class IntegrationAgent(ScAgentClassic, ABC):
         self.nrel_name: ScAddr = ScKeynodes.get("nrel_name")
         self.nrel_email: ScAddr = ScKeynodes.get("nrel_email")
         self.author_node: ScAddr | None = None
+        self._crypto_service = FernetCryptoService(CRYPTO_KEY)
 
     @property
     @abstractmethod
@@ -42,7 +45,7 @@ class IntegrationAgent(ScAgentClassic, ABC):
                 set_node=result_struct,
             ).elements_set.pop()
             access_token = get_link_content_data(token_link)
-            return access_token
+            return self._crypto_service.decrypt_token(access_token)
         return None
 
     def get_author(self) -> User:

@@ -122,7 +122,6 @@ class UpdateEventAgent(CalendarAgent, ABC):
         message_addr: ScAddr,
         old_event: Event,
     ) -> EventWithDate:
-        # Инициализация переменных
         summary = ""
         start_date: Date | None = None
         end_date: Date | None = None
@@ -147,7 +146,6 @@ class UpdateEventAgent(CalendarAgent, ABC):
 
         if start_time_link:
             start_time = get_link_content_data(start_time_link)
-            # Предполагаем, что start_time уже в ISO формате
             start_date = Date(iso=start_time)
 
         if end_time_link:
@@ -159,8 +157,8 @@ class UpdateEventAgent(CalendarAgent, ABC):
 
         event = EventWithDate(
             summary=summary if summary else old_event.summary,
-            start_date=start_date,  # Исправлено: start_date вместо start
-            end_date=end_date,  # Исправлено: end_date вместо end
+            start_date=start_date,
+            end_date=end_date,
         )
 
         return event
