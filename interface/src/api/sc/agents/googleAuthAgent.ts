@@ -24,7 +24,6 @@ export const call_create_author_agent = async (
     action: string,
 ) => {
     try {
-        console.log("Start calling create user agent, session: ", session)
         const keynodes = await client.resolveKeynodes(keynode_images);
         const user_node = await find_user_by_session(session, keynodes);
         if (!user_node)
@@ -73,7 +72,8 @@ export const call_create_author_agent = async (
                     keynodes["rrel_1"],
                 );
 
-            await client.generateByTemplate(template, {});
+            const res = await client.generateByTemplate(template, {});
+            return res?.get(action_node_alias)
         }
         else {
             console.log(
@@ -117,10 +117,9 @@ const find_user_by_session = async (
         
         if (search_result.length){
             const user_node = search_result[0].get(component_user)
-            const session_content = client.getLinkContents([user_node])[0].data
             console.log(
                 'User with auth_session: ', 
-                session_content,
+                session,
                 'already exists!'
             )
             return user_node
