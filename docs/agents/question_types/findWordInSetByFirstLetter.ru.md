@@ -20,16 +20,16 @@
 * Если нет слов, начинающихся с найденной буквы, агент отображает сообщение об их отсутствии.
 
 Правило агента для букв:
-<img src="../images/lr_find_word_by_letter_message.png"></img>
+<img src="./images/lr_find_word_by_letter_message.png"></img>
 
 Шаблон фразы для агента:
-<img src="../images/concept_phrase_about_find_word_by_letter.png"></img>
+<img src="./images/concept_phrase_about_find_word_by_letter.png"></img>
 
 ### Пример
 
 Пример входной структуры:
 
-<img src="../images/FindWordInSetByLetterExample.png"></img>
+<img src="./images/FindWordInSetByLetterExample.png"></img>
 
 ### Результат
 

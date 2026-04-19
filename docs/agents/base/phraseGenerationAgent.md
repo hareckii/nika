@@ -20,7 +20,7 @@ This agent is called by StandardMessageReplyAgent to do this work and it returns
 
 * The agent tries to get `templateNode`, that connected with `phraseLink` by `nrel_phrase_template` norole relation;
 
-<img src="../images/phraseGenerationAgentStep1.png"></img>
+<img src="./images/phraseGenerationAgentStep1.png"></img>
 
 * Then it seeks for arguments of the template - `parametersNode`, this node is connected with `actionAddr` by `rrel_3` role relation;
 * After this the PhraseGenerationAgent generates sc-link by template using `templateNode`, `parametersNode` and `phraseLink`;
@@ -38,11 +38,11 @@ This agent is called by StandardMessageReplyAgent to do this work and it returns
 
 Example of an input structure:
 
-<img src="../images/phraseGenerationAgentStep2.png"></img>
+<img src="./images/phraseGenerationAgentStep2.png"></img>
 
 Example of an output structure:
 
-<img src="../images/phraseGenerationAgentStep3.png"></img>
+<img src="./images/phraseGenerationAgentStep3.png"></img>
 
 ### Structure of Non-Processable Elements  
 

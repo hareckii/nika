@@ -28,3 +28,6 @@ __pycache__
 *.log
 *.env
 .DS_Store
+
+.cmake
+*/CMakeFiles/*

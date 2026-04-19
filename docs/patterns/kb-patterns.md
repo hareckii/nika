@@ -5,7 +5,7 @@ In the `gwf` subdirectory you can find examples in scg. You can load `gwf` files
 
 For example, here you need to replace identifiers `concept_your_message_class_name`, `concept_your_class_identifier`, `concept_phrase_about_your_theme`,
 and `lr_message_about_your_class` to your actual nodes. Also, you can change any relations if you need.
-<img src="../images/answer_rule_example.png"></img>
+<img src="./images/answer_rule_example.png"></img>
 
 In the `scs` subdirectory you can find the same examples in scs.
 

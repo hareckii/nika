@@ -18,18 +18,18 @@
 * Агент вызывается логическим правилом с конкретным цветом или случайным.
 
 Правило для цвета конкретного компонента интерфейса:
-<img src="../images/lr_color_message.png"></img>
+<img src="./images/lr_color_message.png"></img>
 
 Правило цвета случайного компонента интерфейса:
-<img src="../images/lr_random_color_message.png"></img>
+<img src="./images/lr_random_color_message.png"></img>
 
-<img src="../images/interfaceComponentColorExample.png"></img>
+<img src="./images/interfaceComponentColorExample.png"></img>
 
 ### Пример
 
 Пример входной структуры:
 
-<img src="../images/changeInterfaceColorAgentInput.png"></img>
+<img src="./images/changeInterfaceColorAgentInput.png"></img>
 
 ### Результат
 

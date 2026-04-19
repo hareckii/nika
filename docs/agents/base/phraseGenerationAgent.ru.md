@@ -20,7 +20,7 @@
 
 * Агент пытается получить `templateNode`, который связан с `phraseLink` с помощью неролевого отношения `nrel_phrase_template`;
 
-<img src="../images/phraseGenerationAgentStep1.png"></img>
+<img src="./images/phraseGenerationAgentStep1.png"></img>
 
 * После этого PhraseGenerationAgent генерирует sc-ссылку по шаблону, используя `templateNode`, `parametersNode` и  `phraseLink`;
     * Обработка регулярных выражений из `phraseLink` с целью вывода названия переменных из находит;
@@ -36,11 +36,11 @@
 
 Пример входной структуры:
 
-<img src="../images/phraseGenerationAgentStep2.png"></img>
+<img src="./images/phraseGenerationAgentStep2.png"></img>
 
 Пример выходной структуры:
 
-<img src="../images/phraseGenerationAgentStep3.png"></img>
+<img src="./images/phraseGenerationAgentStep3.png"></img>
 
 ### Структура необрабатываемых элементов
 

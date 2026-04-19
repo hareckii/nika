@@ -20,18 +20,18 @@ To test you can use messages like `Измени цвет хедера на #0011
 * The agent is called by logic rule with concrete color or with random color.
 
 The concrete interface component color rule:
-<img src="../images/lr_color_message.png"></img>
+<img src="./images/lr_color_message.png"></img>
 
 The random interface component color rule:
-<img src="../images/lr_random_color_message.png"></img>
+<img src="./images/lr_random_color_message.png"></img>
 
-<img src="../images/interfaceComponentColorExample.png"></img>
+<img src="./images/interfaceComponentColorExample.png"></img>
 
 ### Example
 
 Example of an input structure:
 
-<img src="../images/changeInterfaceColorAgentInput.png"></img>
+<img src="./images/changeInterfaceColorAgentInput.png"></img>
 
 ### Result
 

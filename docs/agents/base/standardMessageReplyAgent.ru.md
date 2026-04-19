@@ -20,23 +20,23 @@
 
 1.1. Пример входной структуры:
 
-<img src="../images/standardMessageReplyAgentAtomicInput.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicInput.png"></img>
 
 1.2. Пример логического правила:
 
-<img src="../images/standardMessageReplyAgentAtomicMessageRule.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicMessageRule.png"></img>
 
 1.3. Пример фразы:
 
-<img src="../images/standardMessageReplyAgentAtomicPhrase.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicPhrase.png"></img>
 
 1.4. Пример выходной структуры (атомарное сообщение):
 
-<img src="../images/standardMessageReplyAgentAtomicMessageOutput.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicMessageOutput.png"></img>
 
 1.5 Пример выходной структуры ответного сообщенения по умолчанию:
 
-<img src="../images/standardMessageReplyAgentReplyByDefault.png"></img>
+<img src="./images/standardMessageReplyAgentReplyByDefault.png"></img>
 
 где `{messageClasses}` - множество классов, которому принадлежит узел `messageAddr`.
 
@@ -45,19 +45,19 @@
 
 2.1. Пример входной структуры:
 
-<img src="../images/standardMessageReplyAgentNonAtomicInput.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicInput.png"></img>
 
 2.2. Пример логического правила:
 
-<img src="../images/standardMessageReplyAgentNonAtomicMessageRule.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicMessageRule.png"></img>
 
 2.3. Пример фразы:
 
-<img src="../images/standardMessageReplyAgentNonAtomicPhrase.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicPhrase.png"></img>
 
 2.4. Пример выходной структуры (неатомарное сообщение):
 
-<img src="../images/standardMessageReplyAgentNonAtomicMessageOutput.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicMessageOutput.png"></img>
 
 ### Результат
 
@@ -87,37 +87,37 @@
 
 1.1. Пример входной структуры:
 
-<img src="../images/standardMessageReplyAgentAtomicInput.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicInput.png"></img>
 
 1.2. Пример логического правила:
 
-<img src="../images/standardMessageReplyAgentAtomicMessageRule.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicMessageRule.png"></img>
 
 1.3. Пример фразы:
 
-<img src="../images/standardMessageReplyAgentAtomicPhrase.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicPhrase.png"></img>
 
 1.4. Пример выходной структуры (атомарное сообщение):
 
-<img src="../images/standardMessageReplyAgentAtomicMessageOutput.png"></img>
+<img src="./images/standardMessageReplyAgentAtomicMessageOutput.png"></img>
 
 #### 2. Генерация неатомарного сообщения
 
 2.1. Пример входной структуры:
 
-<img src="../images/standardMessageReplyAgentNonAtomicInput.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicInput.png"></img>
 
 2.2. Пример логического правила:
 
-<img src="../images/standardMessageReplyAgentNonAtomicMessageRule.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicMessageRule.png"></img>
 
 2.3. Пример фразы:
 
-<img src="../images/standardMessageReplyAgentNonAtomicPhrase.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicPhrase.png"></img>
 
 2.4. Пример выходной структуры (неатомарное сообщение):
 
-<img src="../images/standardMessageReplyAgentNonAtomicMessageOutput.png"></img>
+<img src="./images/standardMessageReplyAgentNonAtomicMessageOutput.png"></img>
 
 ### Результат
 

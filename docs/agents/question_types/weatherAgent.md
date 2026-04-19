@@ -18,16 +18,16 @@ To test you can use message like `Какая температура в Минс�
 * After receiving a response the agent processes it and generates a phrase including weather in the entity.
 
 The agent rule:
-<img src="../images/lr_message_about_weather.png"></img>
+<img src="./images/lr_message_about_weather.png"></img>
 
 The agent template phrase:
-<img src="../images/concept_phrase_about_weather.png"></img>
+<img src="./images/concept_phrase_about_weather.png"></img>
 
 ### Example
 
 Example of an input structure:
 
-<img src="../images/ShowWeatherAgentExample.png"></img>
+<img src="./images/ShowWeatherAgentExample.png"></img>
 
 ### Result
 

@@ -4,7 +4,7 @@
 В подкаталоге `gwf` можно найти примеры в scg. Вы можете загрузить `gwf` файлы  в scg-редактор, синхронизировать и получать новые примеры онлайн.
 
 Например, здесь нужно заменить идентификаторы `concept_your_message_class_name`, `concept_your_class_identifier`, `concept_phrase_about_your_theme` и `lr_message_about_your_class` на Ваши реальные узлы. Кроме того, можно изменить любые отношения, если нужно.
-<img src="../images/answer_rule_example.png"></img>
+<img src="./images/answer_rule_example.png"></img>
 
 В подкаталоге `scs` есть такие же примеры в scs.
 

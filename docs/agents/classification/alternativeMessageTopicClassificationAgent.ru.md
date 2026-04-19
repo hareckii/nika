@@ -14,11 +14,11 @@
 
 Пример входной структуры:
 
-<img src="../images/alternativeMessageTopicClassificationAgentInput.png"></img>
+<img src="./images/alternativeMessageTopicClassificationAgentInput.png"></img>
 
 Пример логической формулы для классификации сообщения:
 
-<img src="../images/lr_greeting_message.png"></img>
+<img src="./images/lr_greeting_message.png"></img>
 
 Результат работы агента зависит от результатов логического вывода. Если какая-либо формула была применена успешно, то `messageAddr` имеет класс согласно формуле.
 В противном случае, `messageAddr` принадлежит классу `concept_not_classified_by_intent_message`.

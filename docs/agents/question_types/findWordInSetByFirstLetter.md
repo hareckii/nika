@@ -20,16 +20,16 @@ To test you can use message like `Что в примере начинается 
 * If there are no words that start with the found letter, the agent displays a message about their absence.
 
 The letter agent rule:
-<img src="../images/lr_find_word_by_letter_message.png"></img>
+<img src="./images/lr_find_word_by_letter_message.png"></img>
 
 The letter agent template phrase:
-<img src="../images/concept_phrase_about_find_word_by_letter.png"></img>
+<img src="./images/concept_phrase_about_find_word_by_letter.png"></img>
 
 ### Example
 
 Example of an input structure:
 
-<img src="../images/FindWordInSetByLetterExample.png"></img>
+<img src="./images/FindWordInSetByLetterExample.png"></img>
 
 ### Result
 

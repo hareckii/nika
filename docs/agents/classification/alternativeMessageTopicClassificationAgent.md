@@ -14,11 +14,11 @@ This is an agent that performs the message classification using [logic rules](..
 
 Examples of an input structure:
 
-<img src="../images/alternativeMessageTopicClassificationAgentInput.png"></img>
+<img src="./images/alternativeMessageTopicClassificationAgentInput.png"></img>
 
 Example of a logic formula to classify message:
 
-<img src="../images/lr_greeting_message.png"></img>
+<img src="./images/lr_greeting_message.png"></img>
 
 The output of the agent depends on the inference agent results. If any formula has been applied successfully, `messageAddr` will have a class according to the formula.
 Otherwise, `messageAddr` has `concept_not_classified_by_intent_message` class.

@@ -24,6 +24,8 @@ nav:
     - Build System: build/build_system.ru.md
     - CMake Flags: build/cmake_flags.md
     - CMake Flags: build/cmake_flags.ru.md
+    - Rasa classifier: build/rasa_classifier.md
+    - Rasa classifier: build/rasa_classifier.ru.md
   - Development:
     - Git-workflow: dev/git-workflow.md
     - Git-workflow: dev/git-workflow.ru.md
@@ -37,14 +39,17 @@ nav:
       - Message reply agent: agents/base/messageReplyAgent.ru.md
       - Non-atomic action interpretation agent: agents/base/nonAtomicActionInterpretationAgent.md
       - Non-atomic action interpretation agent: agents/base/nonAtomicActionInterpretationAgent.ru.md
-      - Alternative message topic classification agent: agents/classification/alternativeMessageTopicClassificationAgent.md
-      - Alternative message topic classification agent: agents/classification/alternativeMessageTopicClassificationAgent.ru.md
-      - Message topic classification agent: agents/classification/messageTopicClassificationAgent.md
-      - Message topic classification agent: agents/classification/messageTopicClassificationAgent.ru.md
       - Standard message reply agent: agents/base/standardMessageReplyAgent.md
       - Standard message reply agent: agents/base/standardMessageReplyAgent.ru.md
       - Phrase generation agent: agents/base/phraseGenerationAgent.md
       - Phrase generation agent: agents/base/phraseGenerationAgent.ru.md
+    - Classification:
+      - Alternative message topic classification agent: agents/classification/alternativeMessageTopicClassificationAgent.md
+      - Alternative message topic classification agent: agents/classification/alternativeMessageTopicClassificationAgent.ru.md
+      - Wit.ai message topic classification agent: agents/classification/messageTopicClassificationAgent.md
+      - Wit.ai message topic classification agent: agents/classification/messageTopicClassificationAgent.ru.md
+      - Rasa message topic classification agent: agents/classification/rasaMessageTopicClassificationAgent.md
+      - Rasa message topic classification agent: agents/classification/rasaMessageTopicClassificationAgent.ru.md
     - Auth:
       - Create Author Agent: agents/auth/createAuthorAgent.md
       - Create Author Agent: agents/auth/createAuthorAgent.ru.md
@@ -104,37 +109,38 @@ plugins:
           Agents: "Агенты"
           Patterns: "Шаблоны"
           Knowledge base patterns: "Шаблоны для базы знаний"
+          Base: "Базовые"
+          Classification: "Классификация"
           Message reply agent: "Агент ответа на сообщение"
           Non-atomic action interpretation agent: "Агент интерпретации неатомарных действий"
-          Alternative message topic classification agent: "Альтернативный агент классификации темы сообщения"
-          Message topic classification agent: "Агент классификации сообщений"
           Standard message reply agent: "Агент генерации ответа на сообщение"
           Phrase generation agent: "Агент генерации фраз"
+          Alternative message topic classification agent: "Альтернативный агент классификации темы сообщения"
+          Wit.ai message topic classification agent: "Агент классификации темы сообщения (Wit.ai)"
+          Rasa message topic classification agent: "Агент классификации темы сообщения (Rasa)"
+          Auth: "Авторизация"
+          Create Access Tokens Agent: "Агент создания токенов доступа"
+          Create Author Agent: "Агент создания автора"
+          Theme agents: "Тематические агенты"
           Interface component color changer agent: "Агент смены цвета компонента интерфейса"
           Weather agent: "Агент прогноза погоды"
           Find word in set by first letter agent: "Агент поиска слова по первой букве"
-          Subsystems: "Подсистемы"
-          License: "Лицензия"
-          Changelog: "Список изменений"
-          Create Access Tokens Agent: "Агент создания токенов доступа"
-          Create Author Agent: "Агент создания автора"
-          Base: "Базовые"
-          Auth: "Авторизация"
-          Theme agents: "Тематические агенты"
           Requires authorization: "Требуют авторизации"
           Contact Creation Agent: "Агент создания контакта"
           Google Calendar Event Addition Agent: "Агент добавления события в гугл календарь"
           Send Mail Agent: "Агент отправки сообщения по почте"
           Google Calendar Event Updating Agent: "Агент обновления события в гугл календаре"
           Google Calendar Event Deleting Agent: "Агент удаления события из гугл календаря"
-
-
+          Subsystems: "Подсистемы"
+          License: "Лицензия"
+          Changelog: "Список изменений"
+          Thirdparty: "Сторонние компоненты"
 
 theme: 
   name: material
   favicon: ostis-logo.png
   logo: ostis-logo.png
-  palette:  # Defines color schemes for light and dark modes
+  palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: indigo
@@ -150,38 +156,33 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    - navigation.instant       # Enables instant loading of pages
-    - navigation.tracking      # Automatically focuses active section in sidebar
-    - navigation.tabs          # Adds top-level sections as tabs
-    - navigation.sections      # Renders top-level sections as groups in sidebar
-    - navigation.expand        # Expands all collapsible sections by default
-    - navigation.top           # Adds a "back to top" button
-    - search.suggest           # Displays search suggestions 
-    - search.highlight         # Highlights search terms on result page
-    - content.action.edit      # Adds links to edit doc files
-    - content.tabs.link        # Shares link when clicking on a tab
-    - content.code.copy        # Adds a copy button to code blocks
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.tabs.link
+    - content.code.copy
 
 extra:
-  # Default mkdocs-material alternate links for untranslated pages
-  # https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/#site-language-selector
-  # For translated pages the language name is replaced by the string configured in i18n plugin
-  # section and link is replaced by the link to the translated page
   alternate:
     - name: "Home"
       link: ""
       lang: en
-
     - name: "Главная"
       link: index.ru
       lang: ru
 
 markdown_extensions:
-  - admonition                 # Allows creation of call-out boxes (e.g., notes, warnings)
+  - admonition
   - codehilite
-  - md_in_html                 # Allows Markdown syntax inside HTML blocks
-  - pymdownx.highlight:        # Enhances code block highlighting
+  - md_in_html
+  - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.inlinehilite      # Enables inline code highlighting
-  - pymdownx.details           # Allows creating collapsible elements
-  - pymdownx.superfences       # Enables advanced fenced code blocks
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.superfences

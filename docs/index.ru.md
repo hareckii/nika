@@ -17,6 +17,7 @@ NIKA - это интеллектуальный ассистент, управл�
 - [Docker](build/docker_build.md) - *сборка, запуск и развертывание NIKA с использованием контейнеров Docker*
 - [Система сборки](build/build_system.md) - *понимание компонентов базовой системы сборки*
 - [Флаги CMake](build/cmake_flags.md) - *настройка процесса сборки с использованием доступных опций CMake*
+- [Rasa классификатор](build/rasa_classifier.md) - *сборка и запуск Rasa классификатора и настройка его NLU модуля*
 
 </details>
 
@@ -37,6 +38,7 @@ NIKA - это интеллектуальный ассистент, управл�
 - [Стандартный агент ответа на сообщения](agents/base/standardMessageReplyAgent.md) - *предоставляет ответы на сообщения*
 - [Агент классификации темы сообщения](agents/classification/messageTopicClassificationAgent.md) - *определяет тему сообщений пользователя при помощи Wit.ai*
 - [Альтернативный агент классификации темы сообщения](agents/classification/alternativeMessageTopicClassificationAgent.md) - *подход к классификации темы сообщений пользователя при помощи логических правил*
+- [Агент классификации темы сообщения с помощью Rasa](agents/classification/rasaMessageTopicClassificationAgent.ru.md) - *определяет тему сообщений пользователя при помощи Rasa*
 - [Агент генерации фраз](agents/base/phraseGenerationAgent.md) - *создает фразы на естественном языке*
 - [Агент изменения цвета компонента интерфейса](agents/question_types/changeInterfaceColorAgent.md) - *динамически настраивает цвет пользовательского интерфейса*
 - [Агент поиска слова во множестве по первой букве](agents/question_types/findWordInSetByFirstLetter.md) - *ищет слова в определенном множестве на основе их начальной буквы*

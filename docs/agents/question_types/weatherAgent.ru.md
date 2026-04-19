@@ -18,16 +18,16 @@
 * После получения ответа агент обрабатывает его и генерирует фразу, включающую погоду в сущности.
 
 Правило агента:
-<img src="../images/lr_message_about_weather.png"></img>
+<img src="./images/lr_message_about_weather.png"></img>
 
 Шаблон фразы для агента:
-<img src="../images/concept_phrase_about_weather.png"></img>
+<img src="./images/concept_phrase_about_weather.png"></img>
 
 ### Пример
 
 Пример входной структуры:
 
-<img src="../images/ShowWeatherAgentExample.png"></img>
+<img src="./images/ShowWeatherAgentExample.png"></img>
 
 ### Результат
 
